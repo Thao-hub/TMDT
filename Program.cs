@@ -2,10 +2,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ThueVayDuTiec.Web.Data;
 using ThueVayDuTiec.Web.Models;
+using ThueVayDuTiec.Web.Services;
 
 var builder = WebApplication.CreateBuilder(args);
-var moiTruongPhatTrien = builder.Environment.IsDevelopment();
-
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<UngDungDbContext>(tuyChon =>
     tuyChon.UseSqlServer(builder.Configuration.GetConnectionString("KetNoiMacDinh")));
@@ -13,11 +12,12 @@ builder.Services.AddIdentity<NguoiDung, IdentityRole>(tuyChon =>
     {
         tuyChon.User.RequireUniqueEmail = true;
         tuyChon.SignIn.RequireConfirmedAccount = false;
-        tuyChon.Password.RequiredLength = 1;
-        tuyChon.Password.RequireDigit = !moiTruongPhatTrien;
-        tuyChon.Password.RequireLowercase = false;
-        tuyChon.Password.RequireUppercase = false;
-        tuyChon.Password.RequireNonAlphanumeric = false;
+        tuyChon.Password.RequiredLength = 8;
+        tuyChon.Password.RequiredUniqueChars = 1;
+        tuyChon.Password.RequireDigit = false;
+        tuyChon.Password.RequireLowercase = true;
+        tuyChon.Password.RequireUppercase = true;
+        tuyChon.Password.RequireNonAlphanumeric = true;
         tuyChon.Lockout.MaxFailedAccessAttempts = 5;
         tuyChon.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(10);
         tuyChon.Lockout.AllowedForNewUsers = true;

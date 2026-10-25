@@ -13,8 +13,13 @@
         <label asp-for="HoTen"></label><input asp-for="HoTen" autocomplete="name" /><span asp-validation-for="HoTen" class="loi-bieu-mau"></span>
         <label asp-for="Email"></label><input asp-for="Email" autocomplete="email" /><span asp-validation-for="Email" class="loi-bieu-mau"></span>
         <label asp-for="SoDienThoai"></label><input asp-for="SoDienThoai" autocomplete="tel" /><span asp-validation-for="SoDienThoai" class="loi-bieu-mau"></span>
-        <label asp-for="MatKhau"></label><input asp-for="MatKhau" autocomplete="new-password" /><span asp-validation-for="MatKhau" class="loi-bieu-mau"></span>
-        <label asp-for="XacNhanMatKhau"></label><input asp-for="XacNhanMatKhau" autocomplete="new-password" /><span asp-validation-for="XacNhanMatKhau" class="loi-bieu-mau"></span>
+        <label asp-for="MatKhau"></label>
+        <div class="mat-khau-truong"><input asp-for="MatKhau" autocomplete="new-password" maxlength="15" /><button class="nut-hien-mat-khau" type="button" data-hien-mat-khau aria-label="Hiện mật khẩu" title="Hiện mật khẩu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/><path class="duong-che-mat" d="M3 3l18 18"/></svg></button></div>
+        <span asp-validation-for="MatKhau" class="loi-bieu-mau"></span>
+        <small class="goi-y-mat-khau">8–15 ký tự, có ít nhất 1 chữ thường, 1 chữ hoa và 1 ký tự đặc biệt.</small>
+        <label asp-for="XacNhanMatKhau"></label>
+        <div class="mat-khau-truong"><input asp-for="XacNhanMatKhau" autocomplete="new-password" maxlength="15" /><button class="nut-hien-mat-khau" type="button" data-hien-mat-khau aria-label="Hiện mật khẩu" title="Hiện mật khẩu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/><path class="duong-che-mat" d="M3 3l18 18"/></svg></button></div>
+        <span asp-validation-for="XacNhanMatKhau" class="loi-bieu-mau"></span>
         <button class="nut nut-day-du" type="submit">Đăng ký</button>
         <p class="lien-ket-tai-khoan">Đã có tài khoản? <a asp-action="DangNhap" asp-route-returnUrl="@ViewData["ReturnUrl"]">Đăng nhập</a></p>
     </form>

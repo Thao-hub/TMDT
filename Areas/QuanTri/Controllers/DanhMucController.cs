@@ -16,9 +16,14 @@ public class DanhMucController : Controller
 
     public DanhMucController(UngDungDbContext duLieu) => _duLieu = duLieu;
 
-    public async Task<IActionResult> Index(CancellationToken cancellationToken)
+    public async Task<IActionResult> Index(string? q, CancellationToken cancellationToken)
     {
-        return View(await _duLieu.DanhMucVay
+        q = q?.Trim();
+        var truyVan = _duLieu.DanhMucVay.AsQueryable();
+        if (!string.IsNullOrWhiteSpace(q))
+            truyVan = truyVan.Where(d => d.TenDanhMuc.Contains(q) || (d.MoTa != null && d.MoTa.Contains(q)));
+        ViewBag.TuKhoa = q;
+        return View(await truyVan
             .Include(d => d.DanhSachVay)
             .OrderBy(d => d.TenDanhMuc)
             .ToListAsync(cancellationToken));

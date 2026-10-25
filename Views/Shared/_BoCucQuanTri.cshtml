@@ -12,7 +12,7 @@
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/readable-type.css" asp-append-version="true" />
@@ -29,26 +29,35 @@
 
         <div class="nhan-nhom-menu">VẬN HÀNH</div>
         <nav class="dieu-huong-quan-tri">
-            <a class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "TrangChu" ? "dang-chon" : "")"
+            <a title="Tổng quan" class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "TrangChu" ? "dang-chon" : "")"
                asp-area="QuanTri" asp-controller="TrangChu" asp-action="Index">
-                <span class="bieu-tuong-menu" aria-hidden="true">01</span><span>Tổng quan</span>
+                <svg class="bieu-tuong-menu" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1"/><rect x="13.5" y="3.5" width="7" height="7" rx="1"/><rect x="3.5" y="13.5" width="7" height="7" rx="1"/><rect x="13.5" y="13.5" width="7" height="7" rx="1"/></svg>
+                <span>Tổng quan</span>
             </a>
-            <a class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "DonThue" ? "dang-chon" : "")"
+            <a title="Đơn thuê" class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "DonThue" ? "dang-chon" : "")"
                asp-area="QuanTri" asp-controller="DonThue" asp-action="Index">
-                <span class="bieu-tuong-menu" aria-hidden="true">02</span><span>Đơn thuê</span>
+                <svg class="bieu-tuong-menu" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3.75h9l4 4V20a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4.75a1 1 0 0 1 1-1Z"/><path d="M14.5 4v4h4M8 12h8M8 16h8"/></svg>
+                <span>Đơn thuê</span>
             </a>
-            <a class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Vay" ? "dang-chon" : "")"
+            <a title="Bộ sưu tập váy" class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Vay" ? "dang-chon" : "")"
                asp-area="QuanTri" asp-controller="Vay" asp-action="Index">
-                <span class="bieu-tuong-menu" aria-hidden="true">03</span><span>Bộ sưu tập váy</span>
+                <svg class="bieu-tuong-menu" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5 14 7l4 .7-2.8 2.8.6 4-3.8-1.8-3.8 1.8.6-4L6 7.7 10 7l2-3.5Z"/><path d="M5 17.5c2-.9 4.3-1.4 7-1.4s5 .5 7 1.4M6 20h12"/></svg>
+                <span>Bộ sưu tập váy</span>
             </a>
-            <a class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "DanhMuc" ? "dang-chon" : "")"
+            <a title="Danh mục" class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "DanhMuc" ? "dang-chon" : "")"
                asp-area="QuanTri" asp-controller="DanhMuc" asp-action="Index">
-                <span class="bieu-tuong-menu" aria-hidden="true">04</span><span>Danh mục</span>
+                <svg class="bieu-tuong-menu" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5h6v6H4zM14 5.5h6v6h-6zM4 15.5h6v4H4zM14 15.5h6v4h-6z"/></svg>
+                <span>Danh mục</span>
+            </a>
+            <a title="Thông tin cửa hàng" class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "ThongTinCuaHang" ? "dang-chon" : "")"
+               asp-area="QuanTri" asp-controller="ThongTinCuaHang" asp-action="Index">
+                <svg class="bieu-tuong-menu" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10.5 12 4l8 6.5V20H4z"/><path d="M9 20v-6h6v6M8 9h.01M12 9h.01M16 9h.01"/></svg>
+                <span>Thông tin cửa hàng</span>
             </a>
         </nav>
 
         <div class="the-ben-duoi">
-            <span class="the-ben-nhan">TIỆM VÁY MÂY</span>
+            <span class="the-ben-nhan"><span class="dau-cua-hang" aria-hidden="true"></span> TIỆM VÁY MÂY</span>
             <p>Không gian quản lý dành riêng cho cửa hàng.</p>
             <a asp-area="" asp-controller="TrangChu" asp-action="Index">Mở cửa hàng <span aria-hidden="true">↗</span></a>
         </div>
@@ -58,7 +67,7 @@
             <span class="thong-tin-quan-tri"><strong>Quản trị viên</strong><small>@User.Identity?.Name</small></span>
             <form asp-area="" asp-controller="TaiKhoan" asp-action="DangXuat" method="post">
                 @Html.AntiForgeryToken()
-                <button type="submit" class="nut-dang-xuat" aria-label="Đăng xuất" title="Đăng xuất">↗</button>
+                <button type="submit" class="nut-dang-xuat" aria-label="Đăng xuất" title="Đăng xuất"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4H5.5A1.5 1.5 0 0 0 4 5.5v13A1.5 1.5 0 0 0 5.5 20H10M14 8l4 4-4 4M8 12h10"/></svg></button>
             </form>
         </div>
     </aside>
@@ -66,13 +75,23 @@
     <main class="noi-dung-quan-tri" id="noi-dung-chinh">
         <header class="thanh-tren-quan-tri">
             <div class="cum-tieu-de-thanh-tren">
-                <button class="nut-mo-menu" type="button" aria-controls="menu-quan-tri" aria-expanded="false" aria-label="Mở menu quản trị" data-open-menu>
-                    <span></span><span></span>
+                <button class="nut-mo-menu" type="button" aria-controls="menu-quan-tri" aria-expanded="true" aria-label="Thu gọn menu quản trị" title="Thu gọn menu" data-open-menu>
+                    <span></span><span></span><span></span>
                 </button>
                 <span class="duong-dan-quan-tri">TIỆM VÁY MÂY <span>/</span> QUẢN TRỊ</span>
             </div>
             <div class="hanh-dong-thanh-tren">
-                <span class="trang-thai-hoat-dong"><i></i> Hệ thống hoạt động</span>
+                <div class="cum-chuong-thong-bao" data-thong-bao data-url="/ThongBao/DanhSach" data-che-do="quan-tri">
+                    <button class="nut-chuong-thong-bao" type="button" title="Thông báo đơn thuê" aria-label="Mở thông báo" aria-expanded="false" aria-controls="bang-thong-bao-quan-tri">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" /></svg>
+                        <span class="so-chuong-thong-bao" hidden></span>
+                    </button>
+                    <section class="bang-chuong-thong-bao" id="bang-thong-bao-quan-tri" hidden aria-label="Thông báo đơn thuê">
+                        <div class="dau-bang-thong-bao"><strong>Thông báo</strong><span>Đơn chờ xác nhận</span></div>
+                        <div class="noi-dung-chuong-thong-bao" aria-live="polite"><p class="trang-thai-tai-thong-bao">Đang tải thông báo…</p></div>
+                        <a class="chan-bang-thong-bao" asp-area="QuanTri" asp-controller="DonThue" asp-action="Index">Mở quản lý đơn thuê <span>→</span></a>
+                    </section>
+                </div>
                 <button class="nut-doi-giao-dien" type="button" data-theme-toggle aria-label="Chuyển giao diện tối">
                     <span aria-hidden="true" data-theme-icon>◐</span>
                     <span data-theme-label>Giao diện tối</span>
@@ -95,6 +114,7 @@
     </main>
 </div>
 <script src="~/js/admin.js" asp-append-version="true"></script>
+<script src="~/js/thong-bao.js" asp-append-version="true"></script>
 @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

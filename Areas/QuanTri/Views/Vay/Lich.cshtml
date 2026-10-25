@@ -9,7 +9,7 @@
     @if (!Model.Any()) { <p>Chưa có lịch thuê.</p> }
     else
     {
-        <div class="bang-cuon"><table class="bang-quan-ly">
+        <div class="bang-cuon"><table class="bang-quan-ly bang-lich-thue">
             <thead><tr><th>Mã đơn</th><th>Khách hàng</th><th>Từ ngày</th><th>Đến ngày</th><th>Trạng thái</th></tr></thead>
             <tbody>
             @foreach (var don in Model)
@@ -18,13 +18,16 @@
                 {
                     "ChoXacNhan" => "Chờ xác nhận",
                     "DaXacNhan" => "Đã xác nhận",
+                    "DaNhanVay" => "Khách đã nhận váy",
+                    "DaHoanTra" => "Hoàn thành",
+                    "KhongDenNhan" => "Khách không đến nhận · Mất cọc",
                     "DaHuy" => "Đã hủy",
                     _ => don.TrangThai
                 };
                 var lopTrangThai = don.TrangThai switch
                 {
-                    "DaXacNhan" => "da-xac-nhan",
-                    "DaHuy" => "da-huy",
+                    "DaXacNhan" or "DaNhanVay" or "DaHoanTra" => "da-xac-nhan",
+                    "DaHuy" or "KhongDenNhan" => "da-huy",
                     _ => "cho-xac-nhan"
                 };
                 <tr><td><a asp-area="QuanTri" asp-controller="DonThue" asp-action="ChiTiet" asp-route-id="@don.MaDonThue">#VT-@don.MaDonThue.ToString("D5")</a></td><td>@don.HoTenKhach</td><td>@don.NgayBatDauThue.ToString("dd/MM/yyyy")</td><td>@don.NgayKetThucThue.ToString("dd/MM/yyyy")</td><td><span class="trang-thai-don @lopTrangThai">@trangThaiDon</span></td></tr>

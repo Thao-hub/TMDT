@@ -11,7 +11,20 @@
         <a asp-area="QuanTri" asp-controller="DanhMuc" asp-action="Index"><strong>@Model.SoDanhMuc</strong><span>Danh mục bộ sưu tập</span></a>
         <a asp-area="QuanTri" asp-controller="DonThue" asp-action="Index"><strong>@Model.SoDonCho</strong><span>Đơn chờ xác nhận</span></a>
         <a asp-area="QuanTri" asp-controller="DonThue" asp-action="Index"><strong>@Model.SoDonDaXacNhan</strong><span>Đơn đã xác nhận</span></a>
+        <a asp-area="QuanTri" asp-controller="DonThue" asp-action="Index"><strong>@Model.SoDonHoanTat</strong><span>Đơn đã xong <small>(gồm khách vắng mặt)</small></span></a>
     </div>
+    <section class="tong-quan-tai-chinh" aria-label="Tổng quan doanh thu">
+        <div class="doanh-thu-chinh">
+            <span class="nhan-nho">DOANH THU TIỀN THUÊ LŨY KẾ</span>
+            <strong>@Model.DoanhThuTienThue.ToString("N0")₫</strong>
+            <p>Chỉ cộng tiền thuê đã thu khi khách đến nhận váy.</p>
+        </div>
+        <div class="doanh-thu-coc">
+            <span class="nhan-nho">TIỀN CỌC GIỮ DO KHÁCH VẮNG MẶT</span>
+            <strong>@Model.TienCocBiGiu.ToString("N0")₫</strong>
+            <p>Hiển thị riêng, không cộng vào doanh thu tiền thuê.</p>
+        </div>
+    </section>
     <nav class="lien-ket-quan-ly">
         <a asp-area="QuanTri" asp-controller="Vay" asp-action="Them">＋ Thêm thiết kế mới</a>
         <a asp-area="QuanTri" asp-controller="DanhMuc" asp-action="Them">＋ Tạo danh mục</a>
@@ -34,7 +47,7 @@
     else
     {
         <div class="bang-cuon">
-            <table class="bang-quan-ly">
+            <table class="bang-quan-ly bang-tong-quan-don">
                 <thead>
                     <tr><th>MÃ ĐƠN</th><th>KHÁCH HÀNG</th><th>NGÀY ĐẶT</th><th>THỜI GIAN THUÊ</th><th>TỔNG TIỀN</th><th>TRẠNG THÁI</th><th></th></tr>
                 </thead>
@@ -45,13 +58,16 @@
                     {
                         "ChoXacNhan" => "Chờ xác nhận",
                         "DaXacNhan" => "Đã xác nhận",
+                        "DaNhanVay" => "Khách đã nhận váy",
+                        "DaHoanTra" => "Hoàn thành",
+                        "KhongDenNhan" => "Khách không đến nhận · Mất cọc",
                         "DaHuy" => "Đã hủy",
                         _ => don.TrangThai
                     };
                     var lopTrangThai = don.TrangThai switch
                     {
-                        "DaXacNhan" => "da-xac-nhan",
-                        "DaHuy" => "da-huy",
+                        "DaXacNhan" or "DaNhanVay" or "DaHoanTra" => "da-xac-nhan",
+                        "DaHuy" or "KhongDenNhan" => "da-huy",
                         _ => "cho-xac-nhan"
                     };
                     <tr>

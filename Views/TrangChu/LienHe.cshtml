@@ -1,0 +1,31 @@
+@inject Microsoft.Extensions.Configuration.IConfiguration CauHinh
+@{
+    ViewData["Title"] = "Liên hệ cửa hàng";
+    var diaChi = CauHinh["ThongTinCuaHang:DiaChi"];
+    var soDienThoai = CauHinh["ThongTinCuaHang:SoDienThoai"];
+    var email = CauHinh["ThongTinCuaHang:Email"];
+    var gioHoTro = CauHinh["ThongTinCuaHang:GioHoTro"];
+    diaChi = string.IsNullOrWhiteSpace(diaChi) ? "Chưa cập nhật" : diaChi;
+    soDienThoai = string.IsNullOrWhiteSpace(soDienThoai) ? "Chưa cập nhật" : soDienThoai;
+    email = string.IsNullOrWhiteSpace(email) ? "Chưa cập nhật" : email;
+    gioHoTro = string.IsNullOrWhiteSpace(gioHoTro) ? "Chưa cập nhật" : gioHoTro;
+}
+<section class="trang-thong-tin">
+    <article class="trang-thong-tin-noi-dung">
+        <span class="nhan-nho">TIỆM VÁY MÂY</span>
+        <h1>Liên hệ cửa hàng</h1>
+        <p class="mo-ta">Cần tư vấn chọn váy, kiểm tra ngày trống hoặc hỏi về đơn thuê? Cửa hàng sẵn sàng hỗ trợ bạn.</p>
+        <div class="the-lien-he">
+            <div><span>Địa chỉ cửa hàng</span><strong>@diaChi</strong></div>
+            <div><span>Số điện thoại</span><strong>@soDienThoai</strong></div>
+            <div><span>Email</span><strong>@email</strong></div>
+            <div><span>Giờ hỗ trợ</span><strong>@gioHoTro</strong></div>
+        </div>
+        <p class="ghi-chu-thong-tin">Bạn có thể liên hệ cửa hàng qua các thông tin trên trong giờ hỗ trợ.</p>
+        @if (User.IsInRole("QuanTriVien"))
+        {
+            <a asp-area="QuanTri" asp-controller="ThongTinCuaHang" asp-action="Index">Chỉnh sửa thông tin cửa hàng <span>↗</span></a>
+        }
+        <a asp-controller="TrangChu" asp-action="QuyTrinhThue">Xem quy trình thuê váy <span>→</span></a>
+    </article>
+</section>

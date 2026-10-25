@@ -13,6 +13,7 @@ public class UngDungDbContext : IdentityDbContext<NguoiDung>
     public DbSet<VayDuTiec> VayDuTiec => Set<VayDuTiec>();
     public DbSet<HinhAnhVay> HinhAnhVay => Set<HinhAnhVay>();
     public DbSet<DonThue> DonThue => Set<DonThue>();
+    public DbSet<TheoDoiDonThue> TheoDoiDonThue => Set<TheoDoiDonThue>();
     public DbSet<ChiTietDonThue> ChiTietDonThue => Set<ChiTietDonThue>();
 
     protected override void OnModelCreating(ModelBuilder boMau)
@@ -107,6 +108,27 @@ public class UngDungDbContext : IdentityDbContext<NguoiDung>
             anh.HasIndex(a => new { a.MaVay, a.ThuTu }).HasDatabaseName("CM_HinhAnhVay_ThuTu");
         });
         boMau.Entity<DonThue>().ToTable("DonThue");
+        boMau.Entity<TheoDoiDonThue>(theoDoi =>
+        {
+            theoDoi.ToTable("TheoDoiDonThue");
+            theoDoi.HasKey(x => x.MaDonThue).HasName("KC_TheoDoiDonThue");
+            theoDoi.Property(x => x.MaDonThue).HasColumnName("MaDon");
+            theoDoi.Property(x => x.NgayNhanVay).HasColumnName("NgayNhan");
+            theoDoi.Property(x => x.NgayKhongDenNhan).HasColumnName("NgayKhongDenNhan");
+            theoDoi.Property(x => x.GhiChuKhongDenNhan).HasColumnName("GhiChuKhongDenNhan").HasMaxLength(500);
+            theoDoi.Property(x => x.TienCocMat).HasColumnName("TienCocMat").HasPrecision(18, 2);
+            theoDoi.Property(x => x.TienThueDaThu).HasColumnName("TienThueDaThu").HasPrecision(18, 2);
+            theoDoi.Property(x => x.NgayThuTienThue).HasColumnName("NgayThuTienThue");
+            theoDoi.Property(x => x.NgayKiemTraTra).HasColumnName("NgayKiemTra");
+            theoDoi.Property(x => x.TinhTrangVay).HasColumnName("TinhTrang").HasMaxLength(30);
+            theoDoi.Property(x => x.GhiChuKiemTra).HasColumnName("GhiChu").HasMaxLength(1000);
+            theoDoi.Property(x => x.TienCoc).HasColumnName("TienCoc").HasPrecision(18, 2);
+            theoDoi.Property(x => x.TienKhauTru).HasColumnName("TienKhauTru").HasPrecision(18, 2);
+            theoDoi.Property(x => x.TienHoanCoc).HasColumnName("TienHoanCoc").HasPrecision(18, 2);
+            theoDoi.Property(x => x.HinhThucHoanCoc).HasColumnName("HinhThucHoanCoc").HasMaxLength(30);
+            theoDoi.Property(x => x.NgayHoanCoc).HasColumnName("NgayHoanCoc");
+            theoDoi.Property(x => x.NguoiThucHienId).HasColumnName("MaNDThucHien").HasMaxLength(50);
+        });
         boMau.Entity<ChiTietDonThue>().ToTable("ChiTietDonThue");
         boMau.Entity<DanhMucVay>().Property(d => d.MaDanhMuc).HasColumnName("MaDM");
         boMau.Entity<DanhMucVay>().Property(d => d.TenDanhMuc).HasColumnName("TenDM");
@@ -121,6 +143,7 @@ public class UngDungDbContext : IdentityDbContext<NguoiDung>
         boMau.Entity<DonThue>().Property(d => d.SoDienThoai).HasColumnName("SDT");
         boMau.Entity<DonThue>().Property(d => d.NgayBatDauThue).HasColumnName("NgayBD").HasColumnType("date");
         boMau.Entity<DonThue>().Property(d => d.NgayKetThucThue).HasColumnName("NgayKT").HasColumnType("date");
+        boMau.Entity<DonThue>().Property(d => d.LyDoHuy).HasMaxLength(500);
         boMau.Entity<ChiTietDonThue>().Property(c => c.MaChiTiet).HasColumnName("MaCT");
         boMau.Entity<ChiTietDonThue>().Property(c => c.MaDonThue).HasColumnName("MaDon");
         boMau.Entity<ChiTietDonThue>().Property(c => c.SoNgayThue).HasColumnName("SoNgay");
@@ -157,6 +180,12 @@ public class UngDungDbContext : IdentityDbContext<NguoiDung>
             .WithMany()
             .HasForeignKey(d => d.NguoiDungId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        boMau.Entity<TheoDoiDonThue>()
+            .HasOne(t => t.DonThue)
+            .WithOne(d => d.TheoDoi)
+            .HasForeignKey<TheoDoiDonThue>(t => t.MaDonThue)
+            .OnDelete(DeleteBehavior.Cascade);
 
         boMau.Entity<DonThue>().HasIndex(d => d.NguoiDungId).HasDatabaseName("CM_Don_ND");
         boMau.Entity<VayDuTiec>().Property(v => v.GiaThueMoiNgay).HasPrecision(18, 2);

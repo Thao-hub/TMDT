@@ -30,7 +30,12 @@ public class DonThue
     [StringLength(30)]
     public string TrangThai { get; set; } = "ChoXacNhan";
 
+    [StringLength(500)]
+    public string? LyDoHuy { get; set; }
+
     public NguoiDung? NguoiDung { get; set; }
+
+    public TheoDoiDonThue? TheoDoi { get; set; }
 
     public List<ChiTietDonThue> DanhSachChiTiet { get; set; } = new();
 }

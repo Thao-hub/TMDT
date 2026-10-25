@@ -1,0 +1,45 @@
+@model ThueVayDuTiec.Web.ViewModels.ThongTinCuaHangViewModel
+@{
+    ViewData["Title"] = "Thông tin cửa hàng";
+}
+<section class="trang-quan-ly">
+    <span class="nhan-nho">THIẾT LẬP CỬA HÀNG</span>
+    <h1>Thông tin cửa hàng</h1>
+    <p class="mo-ta-quan-tri">Cập nhật thông tin liên hệ hiển thị trên trang cửa hàng.</p>
+
+    <div class="khung-thiet-lap-cua-hang">
+        <form asp-action="Index" method="post" class="mau-thong-tin-cua-hang">
+            @Html.AntiForgeryToken()
+            <div class="dau-mau-cua-hang"><span>THÔNG TIN LIÊN HỆ</span><small>Thông tin này sẽ hiển thị trên trang cửa hàng.</small></div>
+            <div asp-validation-summary="ModelOnly" class="loi-bieu-mau"></div>
+
+            <div class="truong-vay truong-cua-hang">
+                <label asp-for="DiaChi"></label>
+                <input asp-for="DiaChi" autocomplete="street-address" placeholder="12 Nguyễn Huệ, Quận 1, TP. Hồ Chí Minh" />
+                <span asp-validation-for="DiaChi" class="loi-bieu-mau"></span>
+            </div>
+            <div class="truong-vay truong-cua-hang">
+                <label asp-for="SoDienThoai"></label>
+                <input asp-for="SoDienThoai" autocomplete="tel" placeholder="0901 234 567" />
+                <span asp-validation-for="SoDienThoai" class="loi-bieu-mau"></span>
+            </div>
+            <div class="truong-vay truong-cua-hang">
+                <label asp-for="Email"></label>
+                <input asp-for="Email" autocomplete="email" placeholder="lienhe@tiemvaymay.vn" />
+                <span asp-validation-for="Email" class="loi-bieu-mau"></span>
+            </div>
+            <div class="truong-vay truong-cua-hang">
+                <label asp-for="GioHoTro"></label>
+                <input asp-for="GioHoTro" placeholder="Thứ Hai – Chủ Nhật, 08:00 – 21:00" />
+                <span asp-validation-for="GioHoTro" class="loi-bieu-mau"></span>
+            </div>
+
+            <div class="chan-mau-cua-hang">
+                <div class="nut-hanh-dong-vay">
+                    <a asp-area="" asp-controller="TrangChu" asp-action="LienHe">Xem trang liên hệ <span aria-hidden="true">↗</span></a>
+                    <button class="nut" type="submit">Lưu thay đổi</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>

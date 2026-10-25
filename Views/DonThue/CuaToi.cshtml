@@ -1,41 +1,87 @@
 @model IEnumerable<DonThue>
 @{
     ViewData["Title"] = "Đơn thuê của tôi";
+    var cacDon = Model.ToList();
 }
-<section class="trang-quan-ly">
-    <span class="nhan-nho">MY RENTALS</span>
-    <h1>Đơn thuê của tôi</h1>
-    @if (TempData["ThongBao"] is string thongBao) { <div class="thong-bao">@thongBao</div> }
-    @if (TempData["ThongBaoLoi"] is string thongBaoLoi) { <div class="loi-bieu-mau">@thongBaoLoi</div> }
-    @if (!Model.Any())
+<section class="trang-don-cua-toi">
+    <div class="dau-trang-don-cua-toi">
+        <div>
+            <h1>Đơn thuê của tôi</h1>
+        </div>
+        <a class="nut-dat-them-vay" href="/#bo-suu-tap">Khám phá váy <span>↗</span></a>
+    </div>
+
+    @if (TempData["ThongBao"] is string thongBao) { <div class="thong-bao" role="status">@thongBao</div> }
+    @if (TempData["ThongBaoLoi"] is string thongBaoLoi) { <div class="loi-chung" role="alert">@thongBaoLoi</div> }
+
+    @if (cacDon.Count == 0)
     {
-        <p>Bạn chưa có đơn thuê nào. <a asp-controller="TrangChu" asp-action="Index">Khám phá bộ sưu tập</a>.</p>
+        <div class="trong-don-cua-toi">
+            <span class="bieu-tuong-trong-don" aria-hidden="true">♡</span>
+            <h2>Bạn chưa có đơn thuê nào</h2>
+            <p>Chọn một thiết kế yêu thích để bắt đầu chuẩn bị cho dịp đặc biệt của bạn.</p>
+            <a class="nut" href="/#bo-suu-tap">Xem bộ sưu tập <span>→</span></a>
+        </div>
     }
     else
     {
-        <div class="bang-cuon"><table class="bang-quan-ly">
-            <thead><tr><th>Mã đơn</th><th>Ngày thuê</th><th>Tổng tiền</th><th>Trạng thái</th><th></th></tr></thead>
-            <tbody>
-            @foreach (var don in Model)
+        <div class="danh-sach-don-cua-toi">
+            @foreach (var don in cacDon)
             {
-                <tr>
-                    <td>#VT-@don.MaDonThue.ToString("D5")</td>
-                    <td>@don.NgayBatDauThue.ToString("dd/MM/yyyy") – @don.NgayKetThucThue.ToString("dd/MM/yyyy")</td>
-                    <td>@don.TongTien.ToString("N0")₫</td>
-                    <td>@don.TrangThai</td>
-                    <td class="hanh-dong-quan-ly">
-                        <a asp-action="XacNhan" asp-route-id="@don.MaDonThue">Chi tiết</a>
+                var tongTienCoc = don.DanhSachChiTiet.Sum(c => c.Vay?.TienDatCoc ?? 0m);
+                var tenTrangThai = don.TrangThai switch
+                {
+                    "ChoXacNhan" => "Chờ xác nhận",
+                    "DaXacNhan" => "Đã xác nhận",
+                    "DaNhanVay" => "Đã nhận váy",
+                    "DaHoanTra" => "Hoàn thành",
+                    "KhongDenNhan" => "Không đến nhận · Mất cọc",
+                    "DaHuy" => "Đã hủy",
+                    _ => don.TrangThai
+                };
+                var lopTrangThai = don.TrangThai switch
+                {
+                    "ChoXacNhan" => "cho-xac-nhan",
+                    "DaXacNhan" => "da-xac-nhan",
+                    "DaNhanVay" => "da-xac-nhan",
+                    "DaHoanTra" => "da-xac-nhan",
+                    "KhongDenNhan" => "da-huy",
+                    "DaHuy" => "da-huy",
+                    _ => "khac"
+                };
+                <article class="the-don-cua-toi dong-don-thue">
+                    <div class="ma-trang-thai-don">
+                        <strong>#VT-@don.MaDonThue.ToString("D5")</strong>
+                        <span class="trang-thai-don @lopTrangThai"><i></i>@tenTrangThai</span>
+                    </div>
+                    <div class="lich-don-mot-hang">
+                        <span>Ngày thuê</span>
+                        <strong>@don.NgayBatDauThue.ToString("dd/MM/yyyy") – @don.NgayKetThucThue.ToString("dd/MM/yyyy")</strong>
+                    </div>
+                    <div class="vay-don-mot-hang">
+                        <span>Thiết kế</span>
+                        <strong>@(don.DanhSachChiTiet.FirstOrDefault()?.Vay?.TenVay ?? "Thiết kế váy")</strong>
+                    </div>
+                    <div class="gia-don-mot-hang">
+                        <span>Thuê (trả lúc nhận) / cọc giữ lịch</span>
+                        <strong>@don.TongTien.ToString("N0")₫ <i>/</i> @tongTienCoc.ToString("N0")₫</strong>
+                        @if ((don.TheoDoi?.TienThueDaThu ?? 0m) > 0)
+                        {
+                            <small>Đã thu tiền thuê: @don.TheoDoi!.TienThueDaThu.ToString("N0")₫</small>
+                        }
+                    </div>
+                    <div class="hanh-dong-the-don">
+                        <a class="nut-xem-don" asp-action="XacNhan" asp-route-id="@don.MaDonThue">Xem chi tiết <span>→</span></a>
                         @if (don.TrangThai == "ChoXacNhan")
                         {
-                            <form asp-action="Huy" asp-route-id="@don.MaDonThue" method="post">
+                            <form asp-action="Huy" asp-route-id="@don.MaDonThue" method="post" onsubmit="return confirm('Bạn có chắc muốn hủy đơn thuê này không?');">
                                 @Html.AntiForgeryToken()
-                                <button type="submit" class="nut-bang">Hủy đơn</button>
+                                <button type="submit" class="nut-huy-don">Hủy yêu cầu</button>
                             </form>
                         }
-                    </td>
-                </tr>
+                    </div>
+                </article>
             }
-            </tbody>
-        </table></div>
+        </div>
     }
 </section>

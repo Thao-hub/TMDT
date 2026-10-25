@@ -1,0 +1,41 @@
+@{
+    ViewData["Title"] = "Quy trình kiểm tra váy và hoàn cọc";
+}
+<section class="trang-thong-tin trang-hoan-coc">
+    <article class="trang-thong-tin-noi-dung">
+        <a class="quay-lai-thong-tin" asp-controller="TrangChu" asp-action="ChinhSachDatCoc">← Quay lại chính sách đặt cọc</a>
+        <span class="nhan-nho">QUY ĐỊNH KIỂM TRA SẢN PHẨM</span>
+        <h1>Kiểm tra váy & hoàn cọc</h1>
+        <p class="mo-ta">Cửa hàng đối chiếu tình trạng váy lúc trả với biên bản và hình ảnh khi giao. Mọi khoản khấu trừ (nếu có) cần nêu rõ lý do, bằng chứng và chi phí.</p>
+
+        <div class="hoan-coc-tom-tat">
+            <div><strong>Kiểm tra lúc trả váy</strong><span>Khách và tiệm cùng đối chiếu tình trạng ngay khi nhận lại váy</span></div>
+            <div><strong>Hoàn cọc tại chỗ</strong><span>Chốt khoản khấu trừ và hoàn phần còn lại ngay sau khi kiểm tra</span></div>
+        </div>
+
+        <h2>Tiệm kiểm tra những gì?</h2>
+        <div class="checklist-hoan-coc">
+            <div><span class="checklist-bieu-tuong">01</span><section><strong>Đúng váy và phụ kiện</strong><p>Đối chiếu mã/thiết kế, số lượng phụ kiện đã giao, dây rời, nơ, đai hoặc chi tiết đi kèm được ghi trong phiếu giao nhận.</p></section></div>
+            <div><span class="checklist-bieu-tuong">02</span><section><strong>Vết rách và đường may</strong><p>Kiểm tra thân váy, lớp lót, đường may, khóa kéo, móc cài, nút và phần đính kết để phát hiện rách, bung chỉ hoặc thiếu chi tiết.</p></section></div>
+            <div><span class="checklist-bieu-tuong">03</span><section><strong>Tình trạng bề mặt vải</strong><p>Ghi nhận vết bẩn khó xử lý, loang màu, cháy xém, xù vải hoặc hư hại khác vượt quá dấu hiệu sử dụng nhẹ thông thường.</p></section></div>
+            <div><span class="checklist-bieu-tuong">04</span><section><strong>Thời gian trả</strong><p>Đối chiếu ngày, giờ trả đã xác nhận. Nếu có nguy cơ trễ, khách vui lòng báo tiệm sớm để cùng thống nhất phương án.</p></section></div>
+        </div>
+
+        <div class="phan-biet-hoan-coc">
+            <section><span class="nhan-nho">KHÔNG TÍNH KHẤU TRỪ</span><h3>Hao mòn nhẹ</h3><p>Nếp nhăn do mặc, dấu hiệu sử dụng nhẹ có thể làm sạch trong quy trình chăm sóc thông thường và vệ sinh định kỳ do cửa hàng phụ trách.</p></section>
+            <section><span class="nhan-nho">CẦN ĐỐI CHIẾU</span><h3>Hư hại phát sinh</h3><p>Rách, cháy, mất phụ kiện, vết bẩn đặc biệt hoặc hư hỏng cần sửa chữa riêng sẽ được chụp ảnh, mô tả và báo chi phí cụ thể để hai bên xác nhận.</p></section>
+        </div>
+
+        <h2>Các bước hoàn cọc</h2>
+        <ol class="thong-tin-cac-buoc">
+            <li><strong>Ghi nhận lúc giao váy</strong><span>Khách và tiệm cùng kiểm tra váy, phụ kiện; ghi chú tình trạng có sẵn và lưu ảnh làm căn cứ đối chiếu khi nhận lại.</span></li>
+            <li><strong>Kiểm tra khi khách trả</strong><span>Khách và nhân viên cùng kiểm tra váy, phụ kiện, đường may và bề mặt vải ngay lúc bàn giao lại.</span></li>
+            <li><strong>Ghi nhận tình trạng</strong><span>Tiệm ghi nhận tình trạng thực tế và giải thích rõ hạng mục, chi phí dự kiến nếu có khấu trừ; khách cùng đối chiếu trước khi chốt.</span></li>
+            <li><strong>Hoàn phần cọc còn lại ngay</strong><span>Sau khi thống nhất kết quả kiểm tra, tiệm hoàn ngay số cọc còn lại bằng tiền mặt hoặc chuyển khoản và ghi nhận hoàn tất đơn.</span></li>
+        </ol>
+
+        <div class="nguyen-tac-hoan-coc"><strong>Nguyên tắc khấu trừ</strong><p>Không tự động giữ toàn bộ tiền cọc chỉ vì phát hiện một lỗi. Mức khấu trừ căn cứ chi phí khắc phục thực tế, có thông tin đối chiếu; khách được xem bằng chứng và phản hồi trước khi chốt.</p></div>
+        <p class="ghi-chu-thong-tin">Để việc đối chiếu công bằng, vui lòng cùng nhân viên kiểm tra váy khi nhận và trả, đồng thời giữ lại phiếu giao nhận, ảnh tình trạng và trao đổi liên quan đến đơn thuê.</p>
+        <a class="lien-ket-hoan-coc" asp-controller="TrangChu" asp-action="LienHe">Liên hệ cửa hàng nếu cần hỗ trợ <span>→</span></a>
+    </article>
+</section>

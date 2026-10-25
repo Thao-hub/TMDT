@@ -24,9 +24,18 @@ public class VayController : Controller
         _moiTruong = moiTruong;
     }
 
-    public async Task<IActionResult> Index(CancellationToken cancellationToken)
+    public async Task<IActionResult> Index(string? q, CancellationToken cancellationToken)
     {
-        var vay = await _duLieu.VayDuTiec
+        q = q?.Trim();
+        var truyVan = _duLieu.VayDuTiec.AsQueryable();
+        if (!string.IsNullOrWhiteSpace(q))
+            truyVan = truyVan.Where(v => v.TenVay.Contains(q)
+                || v.KichCo.Contains(q)
+                || v.MauSac.Contains(q)
+                || v.KieuDang.Contains(q)
+                || v.DanhMuc!.TenDanhMuc.Contains(q));
+        ViewBag.TuKhoa = q;
+        var vay = await truyVan
             .Include(v => v.DanhMuc)
             .Include(v => v.DanhSachHinhAnh)
             .OrderBy(v => v.TenVay).ToListAsync(cancellationToken);

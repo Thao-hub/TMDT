@@ -55,6 +55,7 @@
             </article>
         }
     </div>
+    <nav class="phan-trang-vay" id="phanTrangVay" aria-label="Phân trang bộ sưu tập"></nav>
     @if (!Model.Any()) { <div class="trong-rong">Chưa có váy nào trong hệ thống. Hãy thêm dữ liệu vào cơ sở dữ liệu SQL Server.</div> }
 </section>
 <section class="cach-thue" id="cach-thue">
@@ -62,17 +63,74 @@
     <div class="cac-buoc"><div><b>01</b><span><strong>Chọn chiếc váy</strong><small>Xem mẫu, size và giá thuê</small></span></div><div><b>02</b><span><strong>Chọn khoảng ngày</strong><small>Hệ thống kiểm tra lịch thuê</small></span></div><div><b>03</b><span><strong>Gửi yêu cầu thuê</strong><small>Nhận mã đơn sau khi gửi</small></span></div></div>
 </section>
 <script>
+const cacTheVay = [...document.querySelectorAll('.the-vay')];
+const khungPhanTrang = document.getElementById('phanTrangVay');
+const soVayMoiTrang = 6;
+let trangHienTai = 1;
+
 document.querySelectorAll('.nut-loc').forEach(nut => nut.addEventListener('click', () => {
     document.querySelectorAll('.nut-loc').forEach(x => x.classList.remove('dang-chon'));
     nut.classList.add('dang-chon');
-    locVay();
+    locVay(true);
 }));
-document.getElementById('oTimKiem')?.addEventListener('input', locVay);
-function locVay() {
+document.getElementById('oTimKiem')?.addEventListener('input', () => locVay(true));
+khungPhanTrang?.addEventListener('click', suKien => {
+    const nut = suKien.target.closest('[data-trang]');
+    if (!nut) return;
+    trangHienTai = Number(nut.dataset.trang);
+    locVay();
+    document.getElementById('bo-suu-tap')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+});
+
+function locVay(datLaiTrang = false) {
     const loai = document.querySelector('.nut-loc.dang-chon')?.dataset.loai || 'tat-ca';
     const tuKhoa = (document.getElementById('oTimKiem')?.value || '').toLowerCase().trim();
-    document.querySelectorAll('.the-vay').forEach(the => {
-        the.hidden = !((loai === 'tat-ca' || the.dataset.danhMuc === loai) && the.dataset.ten.includes(tuKhoa));
+    const vayPhuHop = cacTheVay.filter(the =>
+        (loai === 'tat-ca' || the.dataset.danhMuc === loai) && the.dataset.ten.includes(tuKhoa));
+    const tongSoTrang = Math.max(1, Math.ceil(vayPhuHop.length / soVayMoiTrang));
+    if (datLaiTrang) trangHienTai = 1;
+    trangHienTai = Math.min(trangHienTai, tongSoTrang);
+    const batDau = (trangHienTai - 1) * soVayMoiTrang;
+    const tapDangHien = new Set(vayPhuHop.slice(batDau, batDau + soVayMoiTrang));
+    cacTheVay.forEach(the => {
+        the.hidden = !tapDangHien.has(the);
     });
+    veNutPhanTrang(tongSoTrang);
 }
+
+function veNutPhanTrang(tongSoTrang) {
+    if (!khungPhanTrang) return;
+    khungPhanTrang.replaceChildren();
+    const cacTrang = new Set([1, trangHienTai - 1, trangHienTai, trangHienTai + 1, tongSoTrang]);
+    let trangTruoc = 0;
+    [...cacTrang].filter(trang => trang >= 1 && trang <= tongSoTrang).sort((a, b) => a - b).forEach(trang => {
+        if (trang - trangTruoc > 1) {
+            const cham = document.createElement('span');
+            cham.className = 'phan-trang-cham';
+            cham.textContent = '…';
+            khungPhanTrang.append(cham);
+        }
+        const nut = document.createElement('button');
+        nut.type = 'button';
+        nut.dataset.trang = String(trang);
+        nut.textContent = String(trang);
+        if (trang === trangHienTai) {
+            nut.classList.add('dang-chon');
+            nut.setAttribute('aria-current', 'page');
+        }
+        nut.setAttribute('aria-label', `Trang ${trang}`);
+        khungPhanTrang.append(nut);
+        trangTruoc = trang;
+    });
+    if (trangHienTai < tongSoTrang) {
+        const nutSau = document.createElement('button');
+        nutSau.type = 'button';
+        nutSau.dataset.trang = String(trangHienTai + 1);
+        nutSau.className = 'nut-sau';
+        nutSau.textContent = 'Sau';
+        nutSau.setAttribute('aria-label', 'Trang tiếp theo');
+        khungPhanTrang.append(nutSau);
+    }
+}
+locVay();
 </script>

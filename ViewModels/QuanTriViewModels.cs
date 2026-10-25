@@ -65,5 +65,8 @@ public class TrangQuanTriViewModel
     public int SoDanhMuc { get; set; }
     public int SoDonCho { get; set; }
     public int SoDonDaXacNhan { get; set; }
+    public int SoDonHoanTat { get; set; }
+    public decimal DoanhThuTienThue { get; set; }
+    public decimal TienCocBiGiu { get; set; }
     public IReadOnlyList<DonThue> DonGanDay { get; set; } = [];
 }

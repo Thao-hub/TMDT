@@ -1,11 +1,27 @@
 @model DonThue
 @{
     ViewData["Title"] = "Đã nhận yêu cầu";
+    var tongTienCoc = Model.DanhSachChiTiet.Sum(c => c.Vay?.TienDatCoc ?? 0m);
+    var tongDuKien = Model.TongTien + tongTienCoc;
+    var trangThaiDon = Model.TrangThai switch
+    {
+        "ChoXacNhan" => "Chờ xác nhận",
+        "DaXacNhan" => "Đã xác nhận",
+        "DaNhanVay" => "Đã nhận váy",
+        "DaHoanTra" => "Hoàn thành",
+        "KhongDenNhan" => "Không đến nhận · Mất cọc",
+        "DaHuy" => "Đã hủy",
+        _ => Model.TrangThai
+    };
 }
 <section class="xac-nhan-trang">
     <div class="dau-tich">✓</div><span class="nhan-nho">YÊU CẦU ĐÃ ĐƯỢC GHI NHẬN</span>
     <h1>Cảm ơn bạn đã<br><em>chọn Tiệm Váy Mây</em></h1>
-    <p>Yêu cầu thuê của bạn đã được lưu. Cửa hàng sẽ liên hệ để xác nhận lịch thuê và tiền đặt cọc.</p>
-    <div class="thong-tin-don"><div><span>Mã đơn thuê</span><strong>#VT-@Model.MaDonThue.ToString("D5")</strong></div><div><span>Khách hàng</span><strong>@Model.HoTenKhach</strong></div><div><span>Khoảng ngày thuê</span><strong>@Model.NgayBatDauThue.ToString("dd/MM/yyyy") – @Model.NgayKetThucThue.ToString("dd/MM/yyyy")</strong></div><div><span>Trạng thái</span><strong class="trang-thai">@Model.TrangThai</strong></div><div><span>Tổng tiền thuê dự kiến</span><strong>@Model.TongTien.ToString("N0")₫</strong></div></div>
+    <p>Yêu cầu và ảnh chuyển khoản tiền cọc đã được gửi. Cửa hàng sẽ kiểm tra giao dịch và xác nhận lịch thuê. Tiền thuê được thanh toán tại cửa hàng khi bạn đến nhận váy.</p>
+    <div class="thong-tin-don"><div><span>Mã đơn thuê</span><strong>#VT-@Model.MaDonThue.ToString("D5")</strong></div><div><span>Khách hàng</span><strong>@Model.HoTenKhach</strong></div><div><span>Khoảng ngày thuê</span><strong>@Model.NgayBatDauThue.ToString("dd/MM/yyyy") – @Model.NgayKetThucThue.ToString("dd/MM/yyyy")</strong></div><div><span>Trạng thái</span><strong class="trang-thai">@trangThaiDon</strong></div><div><span>Tiền cọc chuyển để giữ lịch</span><strong>@tongTienCoc.ToString("N0")₫</strong></div><div><span>Tiền thuê trả khi nhận váy</span><strong>@Model.TongTien.ToString("N0")₫</strong></div><div><span>Tổng dự kiến</span><strong>@tongDuKien.ToString("N0")₫</strong></div></div>
+    @if ((Model.TheoDoi?.TienThueDaThu ?? 0m) > 0)
+    {
+        <p class="thong-bao">Đã ghi nhận thu @Model.TheoDoi!.TienThueDaThu.ToString("N0")₫ tiền thuê khi giao váy (@Model.TheoDoi.NgayThuTienThue?.ToString("dd/MM/yyyy HH:mm")).</p>
+    }
     <a class="nut" asp-controller="DonThue" asp-action="CuaToi">Xem đơn thuê của tôi <span>→</span></a>
 </section>
