@@ -1,0 +1,45 @@
+@model IEnumerable<DonThue>
+@{
+    ViewData["Title"] = "Quản lý đơn thuê";
+}
+<section class="trang-quan-ly">
+    <span class="nhan-nho">ĐƠN HÀNG</span><h1>Đơn thuê</h1>
+    <p class="mo-ta-quan-tri">Theo dõi lịch thuê và cập nhật trạng thái đơn của khách hàng.</p>
+    <div class="tieu-de-danh-sach"><span>@Model.Count() đơn thuê</span></div>
+    <div class="bang-cuon"><table class="bang-quan-ly">
+        <thead><tr><th>MÃ ĐƠN</th><th>KHÁCH HÀNG</th><th>THỜI GIAN THUÊ</th><th>TỔNG TIỀN</th><th>TRẠNG THÁI</th><th></th></tr></thead>
+        <tbody>
+        @if (!Model.Any())
+        {
+            <tr><td colspan="6"><div class="trong-bang-quan-tri"><strong>Chưa có đơn thuê</strong><span>Đơn thuê mới sẽ được hiển thị tại đây.</span></div></td></tr>
+        }
+        else
+        {
+            @foreach (var don in Model)
+            {
+                var trangThaiDon = don.TrangThai switch
+                {
+                    "ChoXacNhan" => "Chờ xác nhận",
+                    "DaXacNhan" => "Đã xác nhận",
+                    "DaHuy" => "Đã hủy",
+                    _ => don.TrangThai
+                };
+                var lopTrangThai = don.TrangThai switch
+                {
+                    "DaXacNhan" => "da-xac-nhan",
+                    "DaHuy" => "da-huy",
+                    _ => "cho-xac-nhan"
+                };
+                <tr>
+                    <td><a asp-action="ChiTiet" asp-route-id="@don.MaDonThue">#VT-@don.MaDonThue.ToString("D5")</a></td>
+                    <td><strong>@don.HoTenKhach</strong><small class="dong-phu">@don.Email</small></td>
+                    <td>@don.NgayBatDauThue.ToString("dd/MM/yyyy") – @don.NgayKetThucThue.ToString("dd/MM/yyyy")</td>
+                    <td>@don.TongTien.ToString("N0")₫</td>
+                    <td><span class="trang-thai-don @lopTrangThai">@trangThaiDon</span></td>
+                    <td><a asp-action="ChiTiet" asp-route-id="@don.MaDonThue">Chi tiết ↗</a></td>
+                </tr>
+            }
+        }
+        </tbody>
+    </table></div>
+</section>

@@ -1,0 +1,41 @@
+@model IEnumerable<DanhMucVay>
+@{
+    ViewData["Title"] = "Quản lý danh mục";
+}
+<section class="trang-quan-ly">
+    <span class="nhan-nho">PHÂN LOẠI</span><h1>Danh mục bộ sưu tập</h1>
+    <p class="mo-ta-quan-tri">Sắp xếp thiết kế để khách dễ dàng tìm được chiếc váy phù hợp.</p>
+    <div class="tieu-de-danh-sach">
+        <span>@Model.Count() danh mục</span>
+        <a class="nut" asp-action="Them">Tạo danh mục <span>＋</span></a>
+    </div>
+    <div class="bang-cuon"><table class="bang-quan-ly">
+        <thead><tr><th>TÊN DANH MỤC</th><th>MÔ TẢ</th><th>SỐ VÁY</th><th>THAO TÁC</th></tr></thead>
+        <tbody>
+        @if (!Model.Any())
+        {
+            <tr><td colspan="4"><div class="trong-bang-quan-tri"><strong>Chưa có danh mục</strong><span>Tạo danh mục đầu tiên cho bộ sưu tập của tiệm.</span></div></td></tr>
+        }
+        else
+        {
+            @foreach (var danhMuc in Model)
+            {
+                <tr>
+                    <td><strong>@danhMuc.TenDanhMuc</strong></td>
+                    <td>@(string.IsNullOrWhiteSpace(danhMuc.MoTa) ? "—" : danhMuc.MoTa)</td>
+                    <td>@danhMuc.DanhSachVay.Count</td>
+                    <td>
+                        <div class="hanh-dong-vay">
+                            <a class="nut-bang" asp-action="Sua" asp-route-id="@danhMuc.MaDanhMuc">Sửa</a>
+                            <form asp-action="Xoa" asp-route-id="@danhMuc.MaDanhMuc" method="post" data-confirm="Xóa danh mục “@danhMuc.TenDanhMuc”?">
+                                @Html.AntiForgeryToken()
+                                <button class="nut-bang nut-xoa-anh" type="submit">Xóa</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            }
+        }
+        </tbody>
+    </table></div>
+</section>

@@ -1,0 +1,25 @@
+.bo-suu-tap-anh-vay { min-width: 0; }
+.bo-suu-tap-anh-vay .anh-chi-tiet { height: 610px; overflow: hidden; }
+.bo-suu-tap-anh-vay .anh-chi-tiet img { display: block; width: 100%; height: 100%; object-fit: cover; transition: opacity .17s ease; }
+.bo-suu-tap-anh-vay .anh-chi-tiet.dang-chuyen-anh img { opacity: .72; }
+.anh-xem-them { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+.anh-thu-nho { width: 72px; height: 88px; overflow: hidden; padding: 0; border: 1px solid transparent; background: transparent; cursor: pointer; transition: border-color .15s ease, opacity .15s ease, transform .15s ease; }
+.anh-thu-nho img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.anh-thu-nho:hover { transform: translateY(-2px); }
+.anh-thu-nho.dang-chon { border: 2px solid #8c6759; }
+.anh-thu-nho:focus-visible { outline: 2px solid #8c6759; outline-offset: 3px; }
+
+@media(max-width:850px) {
+    .bo-suu-tap-anh-vay .anh-chi-tiet { height: 560px; }
+}
+
+@media(max-width:580px) {
+    .bo-suu-tap-anh-vay .anh-chi-tiet { height: 470px; }
+    .anh-xem-them { gap: 8px; }
+    .anh-thu-nho { width: 62px; height: 76px; }
+}
+
+@media(prefers-reduced-motion:reduce) {
+    .anh-thu-nho,.bo-suu-tap-anh-vay .anh-chi-tiet img { transition-duration: .01ms; }
+    .anh-thu-nho:hover { transform: none; }
+}

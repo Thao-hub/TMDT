@@ -1,0 +1,71 @@
+@model ThueVayDuTiec.Web.ViewModels.TrangQuanTriViewModel
+@{
+    ViewData["Title"] = "Quản trị";
+}
+<section class="trang-quan-ly">
+    <span class="nhan-nho">TỔNG QUAN CỬA HÀNG</span>
+    <h1>Chào mừng trở lại.</h1>
+    <p class="mo-ta-quan-tri">Một góc nhìn nhanh về bộ sưu tập và hoạt động thuê váy tại Tiệm Váy Mây.</p>
+    <div class="the-tong-quan">
+        <a asp-area="QuanTri" asp-controller="Vay" asp-action="Index"><strong>@Model.SoVayDangKinhDoanh</strong><span>Thiết kế đang kinh doanh</span></a>
+        <a asp-area="QuanTri" asp-controller="DanhMuc" asp-action="Index"><strong>@Model.SoDanhMuc</strong><span>Danh mục bộ sưu tập</span></a>
+        <a asp-area="QuanTri" asp-controller="DonThue" asp-action="Index"><strong>@Model.SoDonCho</strong><span>Đơn chờ xác nhận</span></a>
+        <a asp-area="QuanTri" asp-controller="DonThue" asp-action="Index"><strong>@Model.SoDonDaXacNhan</strong><span>Đơn đã xác nhận</span></a>
+    </div>
+    <nav class="lien-ket-quan-ly">
+        <a asp-area="QuanTri" asp-controller="Vay" asp-action="Them">＋ Thêm thiết kế mới</a>
+        <a asp-area="QuanTri" asp-controller="DanhMuc" asp-action="Them">＋ Tạo danh mục</a>
+        <a asp-area="QuanTri" asp-controller="DonThue" asp-action="Index">Mở danh sách đơn thuê ↗</a>
+    </nav>
+    <div class="tieu-de-quan-tri">
+        <div>
+            <span class="nhan-nho">CẬP NHẬT MỚI</span>
+            <h2>Đơn thuê gần đây</h2>
+        </div>
+        <a asp-area="QuanTri" asp-controller="DonThue" asp-action="Index">Xem tất cả đơn ↗</a>
+    </div>
+    @if (Model.DonGanDay.Count == 0)
+    {
+        <div class="trong-quan-tri">
+            <strong>Chưa có đơn thuê mới</strong>
+            <p>Đơn hàng của khách sẽ xuất hiện tại đây khi được tạo.</p>
+        </div>
+    }
+    else
+    {
+        <div class="bang-cuon">
+            <table class="bang-quan-ly">
+                <thead>
+                    <tr><th>MÃ ĐƠN</th><th>KHÁCH HÀNG</th><th>NGÀY ĐẶT</th><th>THỜI GIAN THUÊ</th><th>TỔNG TIỀN</th><th>TRẠNG THÁI</th><th></th></tr>
+                </thead>
+                <tbody>
+                @foreach (var don in Model.DonGanDay)
+                {
+                    var trangThaiDon = don.TrangThai switch
+                    {
+                        "ChoXacNhan" => "Chờ xác nhận",
+                        "DaXacNhan" => "Đã xác nhận",
+                        "DaHuy" => "Đã hủy",
+                        _ => don.TrangThai
+                    };
+                    var lopTrangThai = don.TrangThai switch
+                    {
+                        "DaXacNhan" => "da-xac-nhan",
+                        "DaHuy" => "da-huy",
+                        _ => "cho-xac-nhan"
+                    };
+                    <tr>
+                        <td>#VT-@don.MaDonThue.ToString("D5")</td>
+                        <td>@don.HoTenKhach</td>
+                        <td>@don.NgayTao.ToString("dd/MM/yyyy")</td>
+                        <td>@don.NgayBatDauThue.ToString("dd/MM/yyyy") – @don.NgayKetThucThue.ToString("dd/MM/yyyy")</td>
+                        <td>@don.TongTien.ToString("N0")₫</td>
+                        <td><span class="trang-thai-don @lopTrangThai">@trangThaiDon</span></td>
+                        <td><a asp-area="QuanTri" asp-controller="DonThue" asp-action="ChiTiet" asp-route-id="@don.MaDonThue">Chi tiết</a></td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+</section>

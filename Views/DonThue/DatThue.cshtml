@@ -1,0 +1,17 @@
+@model YeuCauDatThue
+@{
+    ViewData["Title"] = "Đặt thuê váy";
+}
+<section class="dat-thue-trang">
+    <div class="dat-thue-gioi-thieu"><span class="nhan-nho">YOUR SPECIAL MOMENT</span><h1>Đặt thuê<br><em>chiếc váy yêu thích</em></h1><p>Chọn thời gian dự kiến thuê. Hệ thống sẽ kiểm tra lịch trước khi tạo đơn.</p><a asp-controller="TrangChu" asp-action="Index">← Quay lại bộ sưu tập</a></div>
+    <form asp-action="DatThue" method="post" class="bieu-mau-dat">
+        @Html.AntiForgeryToken()
+        <input asp-for="MaVay" type="hidden" />
+        <h2>Thông tin đặt thuê</h2>
+        <div asp-validation-summary="ModelOnly" class="loi-bieu-mau"></div>
+        <p class="thong-tin-thanh-vien"><strong>@ViewBag.HoTenKhach</strong><br />@ViewBag.EmailKhach · @ViewBag.SoDienThoaiKhach <a asp-controller="TaiKhoan" asp-action="HoSo">Cập nhật hồ sơ</a></p>
+        <div class="hang-ngay"><div><label asp-for="NgayBatDauThue">Ngày bắt đầu thuê</label><input asp-for="NgayBatDauThue" type="date" min="@DateTime.Today.ToString("yyyy-MM-dd")" /><span asp-validation-for="NgayBatDauThue" class="loi-bieu-mau"></span></div><div><label asp-for="NgayKetThucThue">Ngày trả váy</label><input asp-for="NgayKetThucThue" type="date" min="@DateTime.Today.ToString("yyyy-MM-dd")" /><span asp-validation-for="NgayKetThucThue" class="loi-bieu-mau"></span></div></div>
+        <p class="ghi-chu-bieu-mau">Ngày thuê và ngày trả đều được tính vào tổng số ngày thuê. Yêu cầu chỉ được xác nhận sau khi cửa hàng kiểm tra.</p>
+        <button class="nut nut-day-du" type="submit">Gửi yêu cầu thuê <span>→</span></button>
+    </form>
+</section>

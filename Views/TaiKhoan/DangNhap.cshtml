@@ -1,0 +1,20 @@
+@model ThueVayDuTiec.Web.ViewModels.DangNhapViewModel
+@{
+    ViewData["Title"] = "Đăng nhập";
+}
+<section class="tai-khoan-trang">
+    <form asp-action="DangNhap" method="post" class="bieu-mau-tai-khoan">
+        @Html.AntiForgeryToken()
+        <input asp-for="ReturnUrl" type="hidden" />
+        <span class="nhan-nho">WELCOME BACK</span>
+        <h1>Đăng nhập</h1>
+        @if (TempData["ThongBao"] is string thongBao) { <div class="thong-bao">@thongBao</div> }
+        @if (TempData["ThongBaoLoi"] is string thongBaoLoi) { <div class="loi-bieu-mau">@thongBaoLoi</div> }
+        <div asp-validation-summary="ModelOnly" class="loi-bieu-mau"></div>
+        <label asp-for="Email"></label><input asp-for="Email" autocomplete="username" /><span asp-validation-for="Email" class="loi-bieu-mau"></span>
+        <label asp-for="MatKhau"></label><input asp-for="MatKhau" autocomplete="current-password" /><span asp-validation-for="MatKhau" class="loi-bieu-mau"></span>
+        <label class="ghi-nho-dang-nhap"><input asp-for="GhiNhoDangNhap" /> Ghi nhớ đăng nhập</label>
+        <button class="nut nut-day-du" type="submit">Đăng nhập</button>
+        <p class="lien-ket-tai-khoan">Chưa có tài khoản? <a asp-action="DangKy" asp-route-returnUrl="@Model.ReturnUrl">Đăng ký ngay</a></p>
+    </form>
+</section>

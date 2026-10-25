@@ -1,0 +1,75 @@
+@model IEnumerable<VayDuTiec>
+@{
+    ViewData["Title"] = "Quản lý váy";
+}
+<section class="trang-quan-ly">
+    <span class="nhan-nho">BỘ SƯU TẬP</span><h1>Thiết kế của tiệm</h1>
+    <p class="mo-ta-quan-tri">Quản lý hình ảnh, thông tin thuê và tình trạng từng thiết kế.</p>
+    <div class="tieu-de-danh-sach">
+        <span>@Model.Count() thiết kế</span>
+        <a class="nut" asp-action="Them">Thêm thiết kế <span>＋</span></a>
+    </div>
+    <div class="bang-cuon"><table class="bang-quan-ly">
+        <thead><tr><th>THIẾT KẾ</th><th>DANH MỤC</th><th>GIÁ THUÊ / NGÀY</th><th>TÌNH TRẠNG</th><th>THAO TÁC</th></tr></thead>
+        <tbody>
+        @if (!Model.Any())
+        {
+            <tr><td colspan="5"><div class="trong-bang-quan-tri"><strong>Chưa có thiết kế nào</strong><span>Thêm thiết kế đầu tiên để đưa vào bộ sưu tập của tiệm.</span><a asp-action="Them">Thêm thiết kế mới ↗</a></div></td></tr>
+        }
+        else
+        {
+            @foreach (var vay in Model)
+            {
+                var hinhAnh = vay.DanhSachHinhAnh
+                    .OrderByDescending(a => a.AnhChinh)
+                    .ThenBy(a => a.ThuTu)
+                    .Select(a => a.DuongDan)
+                    .FirstOrDefault() ?? vay.HinhAnh;
+                var soAnh = Math.Max(
+                    vay.DanhSachHinhAnh.Count,
+                    string.IsNullOrWhiteSpace(vay.HinhAnh) ? 0 : 1);
+                var laUrlWeb = Uri.TryCreate(hinhAnh, UriKind.Absolute, out var diaChiAnh)
+                    && (diaChiAnh.Scheme == Uri.UriSchemeHttp || diaChiAnh.Scheme == Uri.UriSchemeHttps);
+                if (!laUrlWeb && !string.IsNullOrWhiteSpace(hinhAnh))
+                {
+                    hinhAnh = Url.Content(hinhAnh.StartsWith("~/", StringComparison.Ordinal)
+                        ? hinhAnh
+                        : "~/" + hinhAnh.TrimStart('/', '\\', '~'));
+                }
+                <tr>
+                    <td>
+                        <div class="vay-trong-bang">
+                            @if (!string.IsNullOrWhiteSpace(hinhAnh))
+                            {
+                                <img class="anh-vay-quan-tri" src="@hinhAnh" alt="@vay.TenVay" loading="lazy" />
+                            }
+                            else
+                            {
+                                <span class="anh-vay-khong-co" aria-hidden="true">m.</span>
+                            }
+                            <span><strong>@vay.TenVay</strong><small>@vay.KichCo · @vay.MauSac · @soAnh ảnh</small></span>
+                        </div>
+                    </td>
+                    <td>@vay.DanhMuc?.TenDanhMuc</td>
+                    <td>@vay.GiaThueMoiNgay.ToString("N0")₫</td>
+                    <td><span class="trang-thai-don @(vay.DangKinhDoanh ? "dang-kinh-doanh" : "da-an")">@(vay.DangKinhDoanh ? "Đang kinh doanh" : "Đã ẩn")</span></td>
+                    <td>
+                        <div class="hanh-dong-vay">
+                            <a class="nut-bang" asp-action="Sua" asp-route-id="@vay.MaVay">Sửa</a>
+                            <a class="nut-bang" asp-action="Lich" asp-route-id="@vay.MaVay">Lịch thuê</a>
+                            <form asp-action="Xoa" asp-route-id="@vay.MaVay" method="post" data-confirm="Xóa hẳn mẫu váy này? Váy đã có đơn thuê sẽ không thể xóa.">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="nut-bang nut-xoa-anh">Xóa</button>
+                            </form>
+                            <form asp-action="DoiTrangThai" asp-route-id="@vay.MaVay" method="post">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="nut-bang">@(vay.DangKinhDoanh ? "Ẩn" : "Mở bán")</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            }
+        }
+        </tbody>
+    </table></div>
+</section>

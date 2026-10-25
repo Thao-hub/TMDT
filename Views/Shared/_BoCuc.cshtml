@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Tiệm Váy Mây</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/tai-khoan.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/hinh-anh-vay.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/readable-type.css" asp-append-version="true" />
+</head>
+<body>
+<header class="thanh-dieu-huong">
+    <a class="thuong-hieu" asp-controller="TrangChu" asp-action="Index"><span class="bieu-tuong">M</span><span>mây <small>occasion wear</small></span></a>
+    <nav>
+        <a asp-controller="TrangChu" asp-action="Index">Trang chủ</a>
+        <a href="/#bo-suu-tap">Bộ sưu tập</a>
+        <a href="/#cach-thue">Cách thuê</a>
+    </nav>
+    <div class="tai-khoan-dieu-huong">
+        @if (User.Identity?.IsAuthenticated == true)
+        {
+            <a asp-controller="TaiKhoan" asp-action="HoSo">Xin chào, @User.Identity.Name</a>
+            <a asp-controller="DonThue" asp-action="CuaToi">Đơn thuê</a>
+            @if (User.IsInRole("QuanTriVien"))
+            {
+                <a asp-area="QuanTri" asp-controller="TrangChu" asp-action="Index">Quản trị</a>
+            }
+            <form asp-controller="TaiKhoan" asp-action="DangXuat" method="post">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="nut-link">Đăng xuất</button>
+            </form>
+        }
+        else
+        {
+            <a asp-controller="TaiKhoan" asp-action="DangNhap">Đăng nhập</a>
+            <a asp-controller="TaiKhoan" asp-action="DangKy">Đăng ký</a>
+        }
+        <a class="nut nut-nho" href="/#bo-suu-tap">Chọn váy <span>↗</span></a>
+    </div>
+</header>
+<main>
+    @if (TempData["ThongBao"] is string thongBao)
+    {
+        <div class="thong-bao thong-bao-chung" role="status">@thongBao</div>
+    }
+    @if (TempData["ThongBaoLoi"] is string thongBaoLoi)
+    {
+        <div class="loi-chung" role="alert">@thongBaoLoi</div>
+    }
+    @RenderBody()
+</main>
+<footer class="chan-trang">
+    <div><a class="thuong-hieu" asp-controller="TrangChu" asp-action="Index"><span class="bieu-tuong">M</span><span>mây <small>occasion wear</small></span></a><p>Để bạn tự tin tỏa sáng trong những dịp thật đặc biệt.</p></div>
+    <div><strong>Tiệm Váy Mây</strong><p>Cho thuê váy dự tiệc trực tuyến</p><p>Hỗ trợ: 08:00 – 21:00</p></div>
+    <div><strong>Thông tin</strong><p>Quy trình thuê váy</p><p>Chính sách đặt cọc</p><p>Liên hệ cửa hàng</p></div>
+</footer>
+<script src="~/js/site.js" asp-append-version="true"></script>
+@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

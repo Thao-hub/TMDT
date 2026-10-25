@@ -1,0 +1,125 @@
+@model ThueVayDuTiec.Web.ViewModels.VayQuanTriViewModel
+@{
+    ViewData["Title"] = Model.MaVay == 0 ? "Thêm váy" : "Sửa váy";
+}
+<section class="trang-quan-ly">
+    <span class="nhan-nho">QUẢN TRỊ · VÁY</span><h1>@ViewData["Title"]</h1>
+    <form asp-action="@(Model.MaVay == 0 ? "Them" : "Sua")" asp-route-id="@Model.MaVay" method="post" enctype="multipart/form-data" class="bieu-mau-quan-ly">
+        @Html.AntiForgeryToken()
+        <input asp-for="MaVay" type="hidden" />
+        <div asp-validation-summary="ModelOnly" class="loi-bieu-mau"></div>
+        <div class="truong-vay">
+            <label asp-for="MaDanhMuc"></label>
+            <select asp-for="MaDanhMuc" asp-items="ViewBag.DanhMuc"><option value="">-- Chọn danh mục --</option></select>
+            <span asp-validation-for="MaDanhMuc" class="loi-bieu-mau"></span>
+        </div>
+        <div class="truong-vay">
+            <label asp-for="TenVay"></label>
+            <input asp-for="TenVay" />
+            <span asp-validation-for="TenVay" class="loi-bieu-mau"></span>
+        </div>
+        <div class="truong-vay">
+            <label asp-for="KichCo"></label>
+            <input asp-for="KichCo" />
+            <span asp-validation-for="KichCo" class="loi-bieu-mau"></span>
+        </div>
+        <div class="truong-vay">
+            <label asp-for="MauSac"></label>
+            <input asp-for="MauSac" />
+            <span asp-validation-for="MauSac" class="loi-bieu-mau"></span>
+        </div>
+        <div class="truong-vay">
+            <label asp-for="KieuDang"></label>
+            <input asp-for="KieuDang" />
+            <span asp-validation-for="KieuDang" class="loi-bieu-mau"></span>
+        </div>
+        <div class="truong-vay">
+            <label asp-for="GiaThueMoiNgay"></label>
+            <input asp-for="GiaThueMoiNgay" type="number" min="0" step="1000" />
+            <span asp-validation-for="GiaThueMoiNgay" class="loi-bieu-mau"></span>
+        </div>
+        <div class="truong-vay">
+            <label asp-for="TienDatCoc"></label>
+            <input asp-for="TienDatCoc" type="number" min="0" step="1000" />
+            <span asp-validation-for="TienDatCoc" class="loi-bieu-mau"></span>
+        </div>
+        @if (Model.MaVay == 0)
+        {
+            <fieldset class="nhom-anh-vay">
+                <legend>Ảnh thiết kế</legend>
+                <p>Mỗi lần chọn tối đa 3 ảnh. Ảnh đầu tiên làm ảnh đại diện; mỗi tệp tối đa 8 MB (JPG, PNG, WEBP, GIF).</p>
+                <label for="AnhTaiLen">Chọn ảnh từ thiết bị</label>
+                <input asp-for="AnhTaiLen" type="file" accept=".jpg,.jpeg,.png,.webp,.gif,image/jpeg,image/png,image/webp,image/gif" multiple data-max-files="3" />
+                <span asp-validation-for="AnhTaiLen" class="loi-bieu-mau" data-file-error role="alert" aria-live="polite"></span>
+                <div class="xem-truoc-tep" data-file-preview aria-live="polite"></div>
+            </fieldset>
+        }
+        <div class="nut-hanh-dong-vay">
+            <button class="nut" type="submit">Lưu váy</button>
+            <a asp-action="Index">Quay lại</a>
+        </div>
+    </form>
+    @if (Model.MaVay != 0)
+    {
+        <section class="quan-ly-anh-vay" aria-labelledby="tieu-de-anh-vay">
+            <div class="tieu-de-quan-ly-anh">
+                <div><span class="nhan-nho">BỘ SƯU TẬP</span><h2 id="tieu-de-anh-vay">Ảnh của mẫu váy</h2></div>
+                <span>@Model.DanhSachHinhAnh.Count ảnh</span>
+            </div>
+            <form asp-action="ThemAnh" asp-route-id="@Model.MaVay" method="post" enctype="multipart/form-data" class="them-anh-vay">
+                @Html.AntiForgeryToken()
+                <label for="tepAnhMoi">Thêm ảnh mới</label>
+                <div><input id="tepAnhMoi" name="tepAnh" type="file" accept=".jpg,.jpeg,.png,.webp,.gif,image/jpeg,image/png,image/webp,image/gif" multiple required data-max-files="3" /><button class="nut" type="submit">Tải ảnh lên</button></div>
+                <small>Chọn tối đa 3 ảnh mỗi lần · JPG, PNG, WEBP hoặc GIF · tối đa 8 MB mỗi ảnh</small>
+                <span class="loi-bieu-mau" data-file-error role="alert" aria-live="polite"></span>
+                <div class="xem-truoc-tep" data-file-preview aria-live="polite"></div>
+            </form>
+            @if (Model.DanhSachHinhAnh.Count == 0)
+            {
+                <p class="trong-quan-tri">Mẫu váy chưa có ảnh trong thư viện. Ảnh cũ nếu có vẫn được dùng làm ảnh đại diện cho tới khi bạn tải ảnh mới lên.</p>
+            }
+            else
+            {
+                <div class="luoi-quan-ly-anh">
+                    @foreach (var anh in Model.DanhSachHinhAnh.OrderBy(a => a.ThuTu))
+                    {
+                        <article class="the-quan-ly-anh">
+                            <img src="@anh.DuongDan" alt="Ảnh @Model.TenVay" />
+                            @if (anh.AnhChinh)
+                            {
+                                <span class="nhan-anh-chinh">Ảnh đại diện</span>
+                            }
+                            <div class="thao-tac-anh">
+                                @if (!anh.AnhChinh)
+                                {
+                                    <form asp-action="ChonAnhChinh" asp-route-id="@Model.MaVay" asp-route-maAnh="@anh.MaAnh" method="post">
+                                        @Html.AntiForgeryToken()
+                                        <button class="nut-bang" type="submit">Đặt làm ảnh đại diện</button>
+                                    </form>
+                                }
+                                <form asp-action="ThayAnh" asp-route-id="@Model.MaVay" asp-route-maAnh="@anh.MaAnh" method="post" enctype="multipart/form-data">
+                                    @Html.AntiForgeryToken()
+                                    <label class="nut-bang nut-chon-anh">Chọn ảnh<input name="tepAnh" type="file" accept=".jpg,.jpeg,.png,.webp,.gif,image/jpeg,image/png,image/webp,image/gif" required data-max-files="1" /></label>
+                                    <button class="nut-bang" type="submit">Tải lên</button>
+                                    <div class="xem-truoc-tep" data-file-preview aria-live="polite"></div>
+                                    <span class="loi-bieu-mau" data-file-error role="alert" aria-live="polite"></span>
+                                </form>
+                                <form asp-action="XoaAnh" asp-route-id="@Model.MaVay" asp-route-maAnh="@anh.MaAnh" method="post" data-confirm="Xóa ảnh này khỏi mẫu váy?">
+                                    @Html.AntiForgeryToken()
+                                    @if (anh.AnhChinh)
+                                    {
+                                        <span class="nut-bang nut-xoa-anh nut-khong-the-xoa" aria-label="Không thể xóa ảnh đại diện">Ảnh đại diện</span>
+                                    }
+                                    else
+                                    {
+                                        <button class="nut-bang nut-xoa-anh" type="submit">Xóa ảnh</button>
+                                    }
+                                </form>
+                            </div>
+                        </article>
+                    }
+                </div>
+            }
+        </section>
+    }
+</section>

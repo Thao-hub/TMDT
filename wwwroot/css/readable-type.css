@@ -1,0 +1,606 @@
+body {
+    font-size: 16px;
+    font-weight: 500;
+}
+
+:root {
+    --chu: #292421;
+    --xam: #665d57;
+    --nau: #73564b;
+    --vien: #ddd4ca;
+    --qt-phu: #625a54;
+    --qt-mo: #746a62;
+    --qt-vien: #ddd5cb;
+    --qt-nau: #795747;
+    --qt-nau-dam: #5e4036;
+}
+
+:root[data-theme="dark"] {
+    --qt-phu: #d0c8bf;
+    --qt-mo: #b8afa6;
+    --qt-vien: #57514b;
+    --qt-nau: #ddb49f;
+    --qt-nau-dam: #efc7b2;
+}
+
+.thanh-dieu-huong nav a,
+.tai-khoan-dieu-huong {
+    font-size: 14px;
+}
+
+.thuong-hieu small {
+    font-size: 10px;
+}
+
+.nut,
+.nut-loc,
+.tim-kiem input,
+.dat-thue-gioi-thieu > a {
+    font-size: 14px;
+}
+
+.nhan-nho {
+    font-size: 11px;
+}
+
+.noi-dung-mo-dau > p,
+.dat-thue-gioi-thieu > p,
+.cach-thue p,
+.mo-ta-chi-tiet,
+.xac-nhan-trang > p {
+    font-size: 15px;
+}
+
+.cam-ket,
+.thanh-loi-ich small,
+.cac-buoc small,
+.chan-trang p,
+.duong-dan,
+.luu-y {
+    font-size: 13px;
+}
+
+.thanh-loi-ich strong,
+.cac-buoc strong,
+.chan-trang strong,
+.thong-so strong,
+.tien-coc strong {
+    font-size: 14px;
+}
+
+.tieu-de-khu-vuc > p {
+    font-size: 14px;
+}
+
+.nut-xem,
+.loai-vay,
+.gia-vay small,
+.thong-so small,
+.tien-coc span {
+    font-size: 12px;
+}
+
+.nhan-thue {
+    font-size: 10px;
+}
+
+.thong-tin-vay h3 {
+    font-size: 18px;
+}
+
+.gia-vay strong {
+    font-size: 15px;
+}
+
+.chi-tiet-nho {
+    font-size: 12px;
+}
+
+.gia-lon {
+    font-size: 24px;
+}
+
+.gia-lon small,
+.dat-thue-gioi-thieu > a {
+    font-size: 14px;
+}
+
+.bieu-mau-dat label {
+    font-size: 13px;
+}
+
+.bieu-mau-dat input {
+    font-size: 15px;
+}
+
+.ghi-chu-bieu-mau {
+    font-size: 12px;
+}
+
+.loi-bieu-mau {
+    font-size: 13px;
+}
+
+.thong-tin-don div {
+    font-size: 14px;
+}
+
+.tai-khoan-dieu-huong .nut,
+.trang-quan-ly .nut {
+    font-size: 14px;
+}
+
+.thong-bao,
+.loi-chung {
+    font-size: 14px;
+}
+
+.bieu-mau-tai-khoan > p {
+    font-size: 15px;
+}
+
+.bieu-mau-tai-khoan label:not(.ghi-nho-dang-nhap),
+.bieu-mau-quan-ly label {
+    font-size: 13px;
+}
+
+.bieu-mau-tai-khoan input:not([type="checkbox"]),
+.bieu-mau-quan-ly input,
+.bieu-mau-quan-ly select,
+.bieu-mau-quan-ly textarea {
+    font-size: 15px;
+}
+
+.ghi-nho-dang-nhap,
+.thong-tin-thanh-vien {
+    font-size: 14px;
+}
+
+.loi-bieu-mau {
+    font-size: 13px;
+}
+
+.bang-quan-ly {
+    font-size: 14px;
+}
+
+.bang-quan-ly th {
+    font-size: 12px;
+}
+
+.nut-bang {
+    font-size: 13px;
+}
+
+.the-tong-quan span {
+    font-size: 14px;
+}
+
+.lien-ket-quan-ly > a,
+.mo-ta-quan-tri,
+.trong-quan-tri,
+.trong-quan-tri strong,
+.trong-bang-quan-tri span,
+.trong-bang-quan-tri a,
+.tieu-de-danh-sach,
+.tieu-de-quan-tri a {
+    font-size: 14px;
+}
+
+.trong-quan-tri p {
+    font-size: 14px;
+}
+
+.dong-phu,
+.trang-thai-don,
+.vay-trong-bang small,
+.huong-dan-truong,
+.nhom-anh-vay > p,
+.them-anh-vay small,
+.thong-tin-quan-tri small {
+    font-size: 12px;
+}
+
+.bieu-mau-quan-ly .truong-vay label,
+.them-anh-vay label,
+.bieu-mau-quan-ly .nut-hanh-dong-vay > a {
+    font-size: 14px;
+}
+
+.bieu-mau-quan-ly input,
+.bieu-mau-quan-ly select,
+.bieu-mau-quan-ly textarea,
+.them-anh-vay input,
+.nut-doi-giao-dien,
+.nut-bang {
+    font-size: 14px;
+}
+
+.thao-tac-anh .nut-bang {
+    font-size: 13px;
+}
+
+.thong-tin-quan-tri strong,
+.tieu-de-quan-ly-anh > span,
+.tep-xem-truoc-thong-tin small {
+    font-size: 13px;
+}
+
+.thong-bao-quan-tri,
+.loi-quan-tri,
+.trang-quan-ly .nut {
+    font-size: 15px;
+}
+
+.trang-quan-ly > .nhan-nho {
+    font-size: 11px;
+}
+
+.the-ben-duoi p {
+    font-size: 14px;
+}
+
+.the-ben-duoi a,
+.dieu-huong-quan-tri a,
+.thong-tin-quan-tri strong,
+.vay-trong-bang strong,
+.bieu-mau-quan-ly .truong-vay label {
+    font-size: 15px;
+}
+
+.duong-dan-quan-tri {
+    font-size: 11px;
+}
+
+.trang-thai-hoat-dong,
+.chan-trang-quan-tri {
+    font-size: 12px;
+}
+
+.tep-xem-truoc-thong-tin strong {
+    font-size: 13px;
+}
+
+.xem-truoc-khong-ho-tro {
+    font-size: 11px;
+}
+
+.thanh-dieu-huong nav a,
+.tai-khoan-dieu-huong > a,
+.nut,
+.nut-loc,
+.thanh-loi-ich strong,
+.cac-buoc strong,
+.loai-vay,
+.thong-tin-vay h3,
+.gia-vay strong,
+.chi-tiet-nho,
+.gia-lon,
+.thong-so strong,
+.tien-coc strong,
+.bieu-mau-dat label,
+.xac-nhan-trang h1,
+.thong-tin-don strong,
+.bieu-mau-tai-khoan label:not(.ghi-nho-dang-nhap),
+.bieu-mau-quan-ly label,
+.bang-quan-ly th,
+.hanh-dong-quan-ly a,
+.the-tong-quan span,
+.lien-ket-quan-ly > a,
+.trong-quan-tri strong,
+.trong-bang-quan-tri strong,
+.trong-bang-quan-tri a,
+.trang-thai-don,
+.vay-trong-bang strong,
+.truong-vay label,
+.them-anh-vay label,
+.tieu-de-quan-ly-anh h2,
+.nhan-anh-chinh {
+    font-weight: 600;
+}
+
+.noi-dung-mo-dau > p,
+.dat-thue-gioi-thieu > p,
+.tieu-de-khu-vuc > p,
+.cach-thue p,
+.mo-ta-chi-tiet,
+.thong-tin-don div,
+.mo-ta-quan-tri,
+.bang-quan-ly td,
+.trong-quan-tri p,
+.trong-bang-quan-tri span,
+.huong-dan-truong,
+.nhom-anh-vay > p,
+.them-anh-vay small {
+    color: var(--qt-phu, #625a54);
+    font-weight: 500;
+}
+
+.nhan-nho,
+.loai-vay,
+.duong-dan a,
+.dat-thue-gioi-thieu > a,
+.gia-vay strong,
+.thong-so strong,
+.tien-coc strong,
+.trang-quan-ly a:not(.nut),
+.bang-quan-ly a,
+.nut-bang {
+    color: var(--qt-nau-dam, #5e4036);
+}
+
+.bieu-mau-dat input,
+.bieu-mau-tai-khoan input:not([type="checkbox"]),
+.bieu-mau-quan-ly input,
+.bieu-mau-quan-ly select,
+.bieu-mau-quan-ly textarea,
+.bang-quan-ly {
+    color: var(--qt-muc, #302b29);
+    font-weight: 500;
+}
+
+.dieu-huong-quan-tri a,
+.trang-thai-hoat-dong,
+.the-ben-duoi a,
+.thong-tin-quan-tri strong,
+.trang-quan-ly .nut,
+.lien-ket-quan-ly > a,
+.tieu-de-danh-sach,
+.tieu-de-quan-tri a {
+    font-weight: 600;
+}
+
+.thanh-dieu-huong {
+    gap: clamp(12px, 1.8vw, 28px);
+}
+
+.thanh-dieu-huong nav {
+    flex: 0 0 auto;
+}
+
+.thanh-dieu-huong nav a,
+.tai-khoan-dieu-huong > a,
+.tai-khoan-dieu-huong > form,
+.tai-khoan-dieu-huong > form button {
+    white-space: nowrap;
+}
+
+.tai-khoan-dieu-huong {
+    min-width: 0;
+    flex-wrap: nowrap;
+    gap: clamp(8px, 1vw, 15px);
+}
+
+.tai-khoan-dieu-huong > a:first-child {
+    max-width: clamp(150px, 19vw, 280px);
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.tai-khoan-dieu-huong form {
+    flex: 0 0 auto;
+}
+
+.bo-loc {
+    align-items: center;
+}
+
+.tim-kiem {
+    flex: 0 1 250px;
+    min-width: 190px;
+    min-height: 44px;
+    align-self: center;
+    box-sizing: border-box;
+    padding: 0 0 8px;
+}
+
+.tim-kiem input {
+    flex: 1 1 auto;
+    width: auto;
+    min-width: 0;
+    line-height: 1.4;
+}
+
+@media (max-width: 1100px) {
+    .thanh-dieu-huong {
+        flex-wrap: wrap;
+        row-gap: 12px;
+    }
+
+    .thanh-dieu-huong nav {
+        gap: 16px;
+    }
+
+    .tai-khoan-dieu-huong {
+        flex: 1 1 100%;
+        justify-content: flex-end;
+        flex-wrap: wrap;
+    }
+
+    .tai-khoan-dieu-huong > a:first-child {
+        max-width: min(48vw, 320px);
+    }
+
+    .bo-loc {
+        align-items: center;
+    }
+}
+
+@media (max-width: 850px) {
+    .thanh-dieu-huong {
+        flex-wrap: nowrap;
+    }
+
+    .tai-khoan-dieu-huong {
+        flex: 0 1 auto;
+        justify-content: flex-end;
+    }
+}
+
+@media (max-width: 720px) {
+    .tai-khoan-dieu-huong {
+        flex: 1 1 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 580px) {
+    .thanh-dieu-huong {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 10px;
+        height: auto;
+        min-height: 0;
+        padding: 12px 5%;
+    }
+
+    .thuong-hieu {
+        justify-self: start;
+    }
+
+    .tai-khoan-dieu-huong {
+        width: 100%;
+        justify-content: flex-start;
+        gap: 8px 12px;
+    }
+
+    .tai-khoan-dieu-huong > a:first-child {
+        max-width: min(48vw, 190px);
+    }
+
+    .tai-khoan-dieu-huong .nut.nut-nho {
+        min-height: 40px;
+        padding: 9px 12px;
+        gap: 10px;
+    }
+
+    .khu-vuc-mo-dau {
+        min-height: 0;
+        padding: 28px 5% 38px;
+    }
+
+    .noi-dung-mo-dau {
+        padding: 8px 0;
+    }
+
+    .khu-vuc-mo-dau h1 {
+        font-size: clamp(36px, 9.5vw, 42px);
+        line-height: 1.08;
+        letter-spacing: -1px;
+        margin: 18px 0 16px;
+    }
+
+    .noi-dung-mo-dau > p {
+        font-size: 15px;
+        line-height: 1.7;
+    }
+
+    .trang-tri {
+        right: 0;
+    }
+
+    .bo-suu-tap {
+        padding: 50px 5% 60px;
+    }
+
+    .tieu-de-khu-vuc h2,
+    .cach-thue h2 {
+        font-size: clamp(29px, 8vw, 34px);
+        line-height: 1.18;
+    }
+
+    .bo-loc {
+        align-items: stretch;
+        gap: 8px;
+        margin: 24px 0 20px;
+    }
+
+    .nut-loc {
+        display: inline-flex;
+        min-height: 42px;
+        align-items: center;
+        justify-content: center;
+        padding: 9px 12px;
+        white-space: nowrap;
+    }
+
+    .tim-kiem {
+        flex: 1 0 100%;
+        min-width: 0;
+        min-height: 42px;
+        width: 100%;
+        margin: 4px 0 0;
+        align-self: stretch;
+    }
+
+    .tim-kiem input {
+        width: auto;
+        font-size: 15px;
+    }
+
+    .thanh-loi-ich {
+        padding: 20px 6%;
+    }
+
+    .cac-buoc > div {
+        gap: 14px;
+    }
+
+    .chi-tiet-trang {
+        padding: 20px 5% 44px;
+    }
+
+    .anh-chi-tiet {
+        height: min(120vw, 470px);
+    }
+
+    .noi-dung-chi-tiet h1 {
+        font-size: clamp(32px, 9vw, 38px);
+        line-height: 1.12;
+    }
+
+    .dat-thue-trang {
+        min-height: 0;
+        padding: 32px 5% 48px;
+    }
+
+    .bieu-mau-dat {
+        padding: 26px 20px;
+    }
+
+    .chan-trang {
+        padding: 34px 6%;
+    }
+}
+
+@media (max-width: 430px) {
+    .luoi-vay {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 28px;
+    }
+
+    .anh-vay {
+        height: min(110vw, 420px);
+    }
+
+    .thong-tin-vay {
+        display: flex;
+    }
+
+    .thong-tin-vay h3 {
+        font-size: 19px;
+    }
+
+    .gia-vay {
+        margin: 0;
+        text-align: right;
+    }
+
+    .gia-vay strong {
+        display: block;
+    }
+
+    .gia-vay small {
+        margin-left: 0;
+    }
+}

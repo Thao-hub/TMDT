@@ -1,0 +1,41 @@
+@model IEnumerable<DonThue>
+@{
+    ViewData["Title"] = "Đơn thuê của tôi";
+}
+<section class="trang-quan-ly">
+    <span class="nhan-nho">MY RENTALS</span>
+    <h1>Đơn thuê của tôi</h1>
+    @if (TempData["ThongBao"] is string thongBao) { <div class="thong-bao">@thongBao</div> }
+    @if (TempData["ThongBaoLoi"] is string thongBaoLoi) { <div class="loi-bieu-mau">@thongBaoLoi</div> }
+    @if (!Model.Any())
+    {
+        <p>Bạn chưa có đơn thuê nào. <a asp-controller="TrangChu" asp-action="Index">Khám phá bộ sưu tập</a>.</p>
+    }
+    else
+    {
+        <div class="bang-cuon"><table class="bang-quan-ly">
+            <thead><tr><th>Mã đơn</th><th>Ngày thuê</th><th>Tổng tiền</th><th>Trạng thái</th><th></th></tr></thead>
+            <tbody>
+            @foreach (var don in Model)
+            {
+                <tr>
+                    <td>#VT-@don.MaDonThue.ToString("D5")</td>
+                    <td>@don.NgayBatDauThue.ToString("dd/MM/yyyy") – @don.NgayKetThucThue.ToString("dd/MM/yyyy")</td>
+                    <td>@don.TongTien.ToString("N0")₫</td>
+                    <td>@don.TrangThai</td>
+                    <td class="hanh-dong-quan-ly">
+                        <a asp-action="XacNhan" asp-route-id="@don.MaDonThue">Chi tiết</a>
+                        @if (don.TrangThai == "ChoXacNhan")
+                        {
+                            <form asp-action="Huy" asp-route-id="@don.MaDonThue" method="post">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="nut-bang">Hủy đơn</button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table></div>
+    }
+</section>

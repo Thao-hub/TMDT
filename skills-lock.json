@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "ui-design": {
+      "source": "starchild-ai-agent/official-skills",
+      "sourceType": "github",
+      "skillPath": "ui-design/SKILL.md",
+      "computedHash": "bb699d35b46fe50d905b4523506045bd080b313c0613ff4d421f2ffc31211b0a"
+    }
+  }
+}

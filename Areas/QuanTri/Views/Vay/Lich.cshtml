@@ -1,0 +1,35 @@
+@model IEnumerable<DonThue>
+@{
+    var vay = (VayDuTiec)ViewBag.Vay;
+    ViewData["Title"] = "Lịch thuê";
+}
+<section class="trang-quan-ly">
+    <span class="nhan-nho">QUẢN TRỊ · LỊCH THUÊ</span><h1>@vay.TenVay</h1>
+    <p>Lịch các đơn đang hoạt động cho váy này.</p>
+    @if (!Model.Any()) { <p>Chưa có lịch thuê.</p> }
+    else
+    {
+        <div class="bang-cuon"><table class="bang-quan-ly">
+            <thead><tr><th>Mã đơn</th><th>Khách hàng</th><th>Từ ngày</th><th>Đến ngày</th><th>Trạng thái</th></tr></thead>
+            <tbody>
+            @foreach (var don in Model)
+            {
+                var trangThaiDon = don.TrangThai switch
+                {
+                    "ChoXacNhan" => "Chờ xác nhận",
+                    "DaXacNhan" => "Đã xác nhận",
+                    "DaHuy" => "Đã hủy",
+                    _ => don.TrangThai
+                };
+                var lopTrangThai = don.TrangThai switch
+                {
+                    "DaXacNhan" => "da-xac-nhan",
+                    "DaHuy" => "da-huy",
+                    _ => "cho-xac-nhan"
+                };
+                <tr><td><a asp-area="QuanTri" asp-controller="DonThue" asp-action="ChiTiet" asp-route-id="@don.MaDonThue">#VT-@don.MaDonThue.ToString("D5")</a></td><td>@don.HoTenKhach</td><td>@don.NgayBatDauThue.ToString("dd/MM/yyyy")</td><td>@don.NgayKetThucThue.ToString("dd/MM/yyyy")</td><td><span class="trang-thai-don @lopTrangThai">@trangThaiDon</span></td></tr>
+            }
+            </tbody>
+        </table></div>
+    }
+</section>

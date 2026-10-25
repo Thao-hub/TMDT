@@ -1,0 +1,102 @@
+@model VayDuTiec
+@{
+    ViewData["Title"] = Model.TenVay;
+    string ChuanHoaDuongDanAnh(string? duongDan)
+    {
+        if (string.IsNullOrWhiteSpace(duongDan))
+            return "";
+
+        if (Uri.TryCreate(duongDan, UriKind.Absolute, out var diaChi)
+            && (diaChi.Scheme == Uri.UriSchemeHttp || diaChi.Scheme == Uri.UriSchemeHttps))
+            return duongDan;
+
+        return Url.Content(duongDan.StartsWith("~/", StringComparison.Ordinal)
+            ? duongDan
+            : "~/" + duongDan.TrimStart('/', '\\', '~'));
+    }
+
+    var duongDanAnh = Model.DanhSachHinhAnh
+        .OrderByDescending(anh => anh.AnhChinh)
+        .ThenBy(anh => anh.ThuTu)
+        .Select(anh => anh.DuongDan)
+        .ToList();
+    if (duongDanAnh.Count == 0)
+        duongDanAnh.Add(Model.HinhAnh ?? "");
+
+    var danhSachAnh = duongDanAnh
+        .Where(anh => !string.IsNullOrWhiteSpace(anh))
+        .Select(ChuanHoaDuongDanAnh)
+        .Distinct(StringComparer.OrdinalIgnoreCase)
+        .ToArray();
+    if (danhSachAnh.Length == 0)
+    {
+        danhSachAnh =
+        [
+            "https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&w=1000&q=85"
+        ];
+    }
+}
+<section class="chi-tiet-trang">
+    <div class="duong-dan"><a asp-controller="TrangChu" asp-action="Index">Trang chủ</a> / Bộ sưu tập / @Model.TenVay</div>
+    <div class="chi-tiet-bo-cuc">
+        <div class="bo-suu-tap-anh-vay">
+            <div class="anh-chi-tiet" data-gallery-main>
+                <img id="anhChinhVay" src="@danhSachAnh[0]" alt="@Model.TenVay" />
+            </div>
+            @if (danhSachAnh.Length > 1)
+            {
+                <div class="anh-xem-them" aria-label="Ảnh chi tiết sản phẩm">
+                    @for (var i = 0; i < danhSachAnh.Length; i++)
+                    {
+                        <button type="button"
+                                class="anh-thu-nho @(i == 0 ? "dang-chon" : "")"
+                                data-gallery-thumbnail
+                                data-image="@danhSachAnh[i]"
+                                data-alt="@Model.TenVay - ảnh @(i + 1)"
+                                aria-label="Xem ảnh @(i + 1) của @Model.TenVay"
+                                aria-pressed="@(i == 0 ? "true" : "false")">
+                            <img src="@danhSachAnh[i]" alt="" loading="lazy" />
+                        </button>
+                    }
+                </div>
+            }
+        </div>
+        <div class="noi-dung-chi-tiet">
+            <span class="nhan-nho">@(Model.DanhMuc?.TenDanhMuc ?? "THE OCCASION EDIT")</span>
+            <h1>@Model.TenVay</h1>
+            <div class="gia-lon">@Model.GiaThueMoiNgay.ToString("N0")₫ <small>/ ngày</small></div>
+            <p class="mo-ta-chi-tiet">Thiết kế dành cho những dịp đặc biệt. Vui lòng chọn ngày thuê để kiểm tra lịch trống và gửi yêu cầu đặt thuê.</p>
+            <div class="thong-so">
+                <div><small>Kích cỡ</small><strong>@Model.KichCo</strong></div>
+                <div><small>Màu sắc</small><strong>@Model.MauSac</strong></div>
+                <div><small>Kiểu dáng</small><strong>@Model.KieuDang</strong></div>
+            </div>
+            <div class="tien-coc"><span>Tiền đặt cọc</span><strong>@Model.TienDatCoc.ToString("N0")₫</strong></div>
+            <a class="nut nut-rong" asp-controller="DonThue" asp-action="DatThue" asp-route-id="@Model.MaVay">Chọn ngày thuê <span>→</span></a>
+            <p class="luu-y">* Đơn thuê sẽ ở trạng thái chờ xác nhận. Cửa hàng liên hệ để xác nhận lịch và tiền cọc.</p>
+        </div>
+    </div>
+</section>
+@section Scripts {
+    <script>
+        document.querySelectorAll("[data-gallery-thumbnail]").forEach((thumbnail) => {
+            thumbnail.addEventListener("click", () => {
+                const mainImage = document.getElementById("anhChinhVay");
+                const mainFrame = document.querySelector("[data-gallery-main]");
+                if (!mainImage || !mainFrame) return;
+
+                mainImage.src = thumbnail.dataset.image;
+                mainImage.alt = thumbnail.dataset.alt;
+                mainFrame.classList.remove("dang-chuyen-anh");
+                requestAnimationFrame(() => mainFrame.classList.add("dang-chuyen-anh"));
+                window.setTimeout(() => mainFrame.classList.remove("dang-chuyen-anh"), 170);
+
+                document.querySelectorAll("[data-gallery-thumbnail]").forEach((item) => {
+                    const isSelected = item === thumbnail;
+                    item.classList.toggle("dang-chon", isSelected);
+                    item.setAttribute("aria-pressed", String(isSelected));
+                });
+            });
+        });
+    </script>
+}

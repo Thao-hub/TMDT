@@ -1,0 +1,39 @@
+@model DonThue
+@{
+    ViewData["Title"] = "Chi tiết đơn thuê";
+}
+<section class="trang-quan-ly">
+    @{
+        var trangThaiDon = Model.TrangThai switch
+        {
+            "ChoXacNhan" => "Chờ xác nhận",
+            "DaXacNhan" => "Đã xác nhận",
+            "DaHuy" => "Đã hủy",
+            _ => Model.TrangThai
+        };
+        var lopTrangThai = Model.TrangThai switch
+        {
+            "DaXacNhan" => "da-xac-nhan",
+            "DaHuy" => "da-huy",
+            _ => "cho-xac-nhan"
+        };
+    }
+    <span class="nhan-nho">CHI TIẾT ĐƠN THUÊ</span><h1>Đơn #VT-@Model.MaDonThue.ToString("D5")</h1>
+    <div class="bang-cuon"><table class="bang-quan-ly">
+        <tbody>
+            <tr><th>Khách hàng</th><td>@Model.HoTenKhach</td></tr><tr><th>Email</th><td>@Model.Email</td></tr><tr><th>Số điện thoại</th><td>@Model.SoDienThoai</td></tr>
+            <tr><th>Ngày thuê</th><td>@Model.NgayBatDauThue.ToString("dd/MM/yyyy") – @Model.NgayKetThucThue.ToString("dd/MM/yyyy")</td></tr>
+            <tr><th>Tổng tiền</th><td>@Model.TongTien.ToString("N0")₫</td></tr><tr><th>Trạng thái</th><td><span class="trang-thai-don @lopTrangThai">@trangThaiDon</span></td></tr>
+            @foreach (var chiTiet in Model.DanhSachChiTiet) { <tr><th>Váy</th><td>@chiTiet.Vay?.TenVay · @chiTiet.SoNgayThue ngày × @chiTiet.DonGia.ToString("N0")₫</td></tr> }
+        </tbody>
+    </table></div>
+    <div class="hanh-dong-quan-ly">
+        @if (Model.TrangThai == "ChoXacNhan") {
+            <form asp-action="XacNhan" asp-route-id="@Model.MaDonThue" method="post">@Html.AntiForgeryToken()<button class="nut" type="submit">Xác nhận đơn</button></form>
+        }
+        @if (Model.TrangThai != "DaHuy") {
+            <form asp-action="Huy" asp-route-id="@Model.MaDonThue" method="post">@Html.AntiForgeryToken()<button class="nut-bang" type="submit">Hủy đơn</button></form>
+        }
+        <a asp-action="Index">Quay lại danh sách</a>
+    </div>
+</section>

@@ -1,0 +1,19 @@
+# Copilot agent files
+/.agents/
+
+# .NET build output
+/bin/
+/obj/
+**/bin/
+**/obj/
+
+# Local environment and secrets
+/.env
+appsettings.Local.json
+
+# IDE and operating-system files
+/.vs/
+*.user
+*.suo
+.DS_Store
+Thumbs.db

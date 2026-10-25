@@ -1,0 +1,19 @@
+@model ThueVayDuTiec.Web.ViewModels.HoSoViewModel
+@{
+    ViewData["Title"] = "Hồ sơ cá nhân";
+}
+<section class="tai-khoan-trang">
+    <form asp-action="HoSo" method="post" class="bieu-mau-tai-khoan">
+        @Html.AntiForgeryToken()
+        <span class="nhan-nho">MY ACCOUNT</span>
+        <h1>Hồ sơ cá nhân</h1>
+        @if (TempData["ThongBao"] is string thongBao) { <div class="thong-bao">@thongBao</div> }
+        @if (TempData["ThongBaoLoi"] is string loi) { <div class="loi-bieu-mau">@loi</div> }
+        <div asp-validation-summary="ModelOnly" class="loi-bieu-mau"></div>
+        <label asp-for="Email"></label><input asp-for="Email" readonly />
+        <label asp-for="HoTen"></label><input asp-for="HoTen" autocomplete="name" /><span asp-validation-for="HoTen" class="loi-bieu-mau"></span>
+        <label asp-for="SoDienThoai"></label><input asp-for="SoDienThoai" autocomplete="tel" /><span asp-validation-for="SoDienThoai" class="loi-bieu-mau"></span>
+        <button class="nut nut-day-du" type="submit">Lưu thay đổi</button>
+        <p class="lien-ket-tai-khoan"><a asp-controller="DonThue" asp-action="CuaToi">Xem đơn thuê của tôi</a></p>
+    </form>
+</section>

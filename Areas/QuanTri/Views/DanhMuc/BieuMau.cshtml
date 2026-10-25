@@ -1,0 +1,15 @@
+@model ThueVayDuTiec.Web.ViewModels.DanhMucQuanTriViewModel
+@{
+    ViewData["Title"] = Model.MaDanhMuc == 0 ? "Thêm danh mục" : "Sửa danh mục";
+}
+<section class="trang-quan-ly">
+    <span class="nhan-nho">QUẢN TRỊ · DANH MỤC</span><h1>@ViewData["Title"]</h1>
+    <form asp-action="@(Model.MaDanhMuc == 0 ? "Them" : "Sua")" asp-route-id="@Model.MaDanhMuc" method="post" class="bieu-mau-quan-ly">
+        @Html.AntiForgeryToken()
+        <input asp-for="MaDanhMuc" type="hidden" />
+        <div asp-validation-summary="ModelOnly" class="loi-bieu-mau"></div>
+        <label asp-for="TenDanhMuc"></label><input asp-for="TenDanhMuc" /><span asp-validation-for="TenDanhMuc" class="loi-bieu-mau"></span>
+        <label asp-for="MoTa"></label><textarea asp-for="MoTa" rows="4"></textarea><span asp-validation-for="MoTa" class="loi-bieu-mau"></span>
+        <button class="nut" type="submit">Lưu danh mục</button> <a asp-action="Index">Quay lại</a>
+    </form>
+</section>
