@@ -7,9 +7,14 @@
     <p class="mo-ta-quan-tri">Quản lý hình ảnh, thông tin thuê và tình trạng từng thiết kế.</p>
     <div class="tieu-de-danh-sach">
         <span>@Model.Count() thiết kế</span>
+        <form class="tim-kiem-quan-tri" method="get">
+            <input type="search" name="q" value="@(ViewBag.TuKhoa ?? "")" placeholder="Tìm tên váy, danh mục, màu sắc, kiểu dáng..." aria-label="Tìm thiết kế váy" />
+            <button type="submit">Tìm kiếm</button>
+            @if (!string.IsNullOrWhiteSpace(ViewBag.TuKhoa as string)) { <a asp-action="Index">Xóa</a> }
+        </form>
         <a class="nut" asp-action="Them">Thêm thiết kế <span>＋</span></a>
     </div>
-    <div class="bang-cuon"><table class="bang-quan-ly">
+    <div class="bang-cuon"><table class="bang-quan-ly bang-vay">
         <thead><tr><th>THIẾT KẾ</th><th>DANH MỤC</th><th>GIÁ THUÊ / NGÀY</th><th>TÌNH TRẠNG</th><th>THAO TÁC</th></tr></thead>
         <tbody>
         @if (!Model.Any())

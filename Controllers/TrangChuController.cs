@@ -24,4 +24,12 @@ public class TrangChuController : Controller
     }
 
     public IActionResult Loi() => View();
+
+    public IActionResult QuyTrinhThue() => View();
+
+    public IActionResult ChinhSachDatCoc() => View();
+
+    public IActionResult QuyTrinhHoanCoc() => View();
+
+    public IActionResult LienHe() => View();
 }

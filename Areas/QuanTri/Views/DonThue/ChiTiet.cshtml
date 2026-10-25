@@ -1,39 +1,185 @@
 @model DonThue
 @{
     ViewData["Title"] = "Chi tiết đơn thuê";
+    var trangThaiDon = Model.TrangThai switch
+    {
+        "ChoXacNhan" => "Chờ xác nhận",
+        "DaXacNhan" => "Đã xác nhận",
+        "DaNhanVay" => "Khách đã nhận váy",
+        "DaHoanTra" => "Đã hoàn thành",
+        "KhongDenNhan" => "Khách không đến nhận · Mất cọc",
+        "DaHuy" => "Đã hủy",
+        _ => Model.TrangThai
+    };
+    var lopTrangThai = Model.TrangThai switch
+    {
+        "DaXacNhan" or "DaNhanVay" or "DaHoanTra" => "da-xac-nhan",
+        "DaHuy" or "KhongDenNhan" => "da-huy",
+        _ => "cho-xac-nhan"
+    };
+    var tongTienCoc = Model.TheoDoi?.TienCoc ?? Model.DanhSachChiTiet.Sum(c => c.Vay?.TienDatCoc ?? 0m);
+    var tongDuKien = Model.TongTien + tongTienCoc;
 }
 <section class="trang-quan-ly">
-    @{
-        var trangThaiDon = Model.TrangThai switch
-        {
-            "ChoXacNhan" => "Chờ xác nhận",
-            "DaXacNhan" => "Đã xác nhận",
-            "DaHuy" => "Đã hủy",
-            _ => Model.TrangThai
-        };
-        var lopTrangThai = Model.TrangThai switch
-        {
-            "DaXacNhan" => "da-xac-nhan",
-            "DaHuy" => "da-huy",
-            _ => "cho-xac-nhan"
-        };
-    }
-    <span class="nhan-nho">CHI TIẾT ĐƠN THUÊ</span><h1>Đơn #VT-@Model.MaDonThue.ToString("D5")</h1>
-    <div class="bang-cuon"><table class="bang-quan-ly">
-        <tbody>
-            <tr><th>Khách hàng</th><td>@Model.HoTenKhach</td></tr><tr><th>Email</th><td>@Model.Email</td></tr><tr><th>Số điện thoại</th><td>@Model.SoDienThoai</td></tr>
-            <tr><th>Ngày thuê</th><td>@Model.NgayBatDauThue.ToString("dd/MM/yyyy") – @Model.NgayKetThucThue.ToString("dd/MM/yyyy")</td></tr>
-            <tr><th>Tổng tiền</th><td>@Model.TongTien.ToString("N0")₫</td></tr><tr><th>Trạng thái</th><td><span class="trang-thai-don @lopTrangThai">@trangThaiDon</span></td></tr>
-            @foreach (var chiTiet in Model.DanhSachChiTiet) { <tr><th>Váy</th><td>@chiTiet.Vay?.TenVay · @chiTiet.SoNgayThue ngày × @chiTiet.DonGia.ToString("N0")₫</td></tr> }
-        </tbody>
-    </table></div>
-    <div class="hanh-dong-quan-ly">
-        @if (Model.TrangThai == "ChoXacNhan") {
-            <form asp-action="XacNhan" asp-route-id="@Model.MaDonThue" method="post">@Html.AntiForgeryToken()<button class="nut" type="submit">Xác nhận đơn</button></form>
-        }
-        @if (Model.TrangThai != "DaHuy") {
-            <form asp-action="Huy" asp-route-id="@Model.MaDonThue" method="post">@Html.AntiForgeryToken()<button class="nut-bang" type="submit">Hủy đơn</button></form>
-        }
-        <a asp-action="Index">Quay lại danh sách</a>
+    <span class="nhan-nho">CHI TIẾT ĐƠN THUÊ</span>
+    <h1>Đơn #VT-@Model.MaDonThue.ToString("D5")</h1>
+    <div class="chi-tiet-don-luoi">
+        <div class="chi-tiet-don-noi-dung">
+            <section class="the-chi-tiet-don">
+                <div class="tieu-de-the-don"><h2>Thông tin khách thuê</h2><span class="trang-thai-don @lopTrangThai">@trangThaiDon</span></div>
+                <dl class="luoi-thong-tin-don">
+                    <div><dt>Khách hàng</dt><dd>@Model.HoTenKhach</dd></div>
+                    <div><dt>Email</dt><dd>@Model.Email</dd></div>
+                    <div><dt>Số điện thoại</dt><dd>@Model.SoDienThoai</dd></div>
+                    <div><dt>Thời gian thuê</dt><dd>@Model.NgayBatDauThue.ToString("dd/MM/yyyy") – @Model.NgayKetThucThue.ToString("dd/MM/yyyy")</dd></div>
+                    @if (Model.TrangThai == "DaHuy")
+                    {
+                        <div><dt>Lý do hủy đơn</dt><dd>@(string.IsNullOrWhiteSpace(Model.LyDoHuy) ? "Chưa ghi lý do" : Model.LyDoHuy)</dd></div>
+                    }
+                </dl>
+            </section>
+            <section class="the-chi-tiet-don">
+                <h2>Chi phí dự kiến</h2>
+                <dl class="cac-dong-chi-phi">
+                    <div><dt>Tiền thuê <span>Thu tại cửa hàng khi giao váy</span></dt><dd>@Model.TongTien.ToString("N0")₫</dd></div>
+                    <div><dt>Tiền cọc <span>Khách chuyển để giữ lịch</span></dt><dd>@tongTienCoc.ToString("N0")₫</dd></div>
+                    <div class="dong-tong-cong"><dt>Tổng dự kiến <span>Thuê + cọc</span></dt><dd>@tongDuKien.ToString("N0")₫</dd></div>
+                    @if ((Model.TheoDoi?.TienThueDaThu ?? 0m) > 0)
+                    {
+                        <div><dt>Đã thu tiền thuê lúc giao váy</dt><dd>@Model.TheoDoi!.TienThueDaThu.ToString("N0")₫ · @(Model.TheoDoi.NgayThuTienThue?.ToString("dd/MM/yyyy HH:mm") ?? "")</dd></div>
+                    }
+                </dl>
+            </section>
+            <section class="the-chi-tiet-don">
+                <h2>Váy trong đơn</h2>
+                <div class="danh-sach-vay-don">
+                    @foreach (var chiTiet in Model.DanhSachChiTiet)
+                    {
+                        <article class="dong-vay-don">
+                            <div><strong>@chiTiet.Vay?.TenVay</strong><span>@chiTiet.SoNgayThue ngày × @chiTiet.DonGia.ToString("N0")₫ / ngày</span></div>
+                            <span class="coc-vay-don">Cọc @((chiTiet.Vay?.TienDatCoc ?? 0m).ToString("N0"))₫</span>
+                        </article>
+                    }
+                </div>
+            </section>
+            @if (Model.TrangThai == "KhongDenNhan")
+            {
+                <section class="the-chi-tiet-don">
+                    <h2>Khách không đến nhận váy</h2>
+                    <dl class="luoi-thong-tin-don ket-qua-kiem-tra">
+                        <div><dt>Ghi nhận lúc</dt><dd>@(Model.TheoDoi?.NgayKhongDenNhan?.ToString("dd/MM/yyyy HH:mm") ?? "—")</dd></div>
+                        <div><dt>Lý do / ghi chú</dt><dd>@(Model.TheoDoi?.GhiChuKhongDenNhan ?? "Không có ghi chú")</dd></div>
+                        <div><dt>Tiền cọc bị giữ</dt><dd><strong>@((Model.TheoDoi?.TienCocMat ?? tongTienCoc).ToString("N0"))₫</strong></dd></div>
+                    </dl>
+                </section>
+            }
+            @if (Model.TrangThai == "DaNhanVay" || Model.TrangThai == "DaHoanTra")
+            {
+                <section class="the-chi-tiet-don">
+                    <h2>Kiểm tra khi trả váy và hoàn cọc</h2>
+                    @if (Model.TrangThai == "DaNhanVay")
+                    {
+                        <p class="mo-ta-quan-tri">Kiểm tra váy và phụ kiện cùng khách ngay lúc nhận lại. Ghi tình trạng, khoản khấu trừ (nếu có), rồi hoàn phần cọc còn lại và chốt đơn tại đây.</p>
+                        <ul class="checklist-tra-vay">
+                            <li>Đối chiếu đúng váy và đủ phụ kiện đã giao.</li>
+                            <li>Kiểm tra đường may, khóa, nút và chi tiết đính kèm.</li>
+                            <li>Kiểm tra vết rách, bẩn, loang màu hoặc hư hỏng mới.</li>
+                            <li>Nếu khấu trừ, ghi rõ hạng mục và chi phí để khách cùng đối chiếu.</li>
+                        </ul>
+                        <form asp-action="HoanTra" asp-route-id="@Model.MaDonThue" method="post" class="form-hoan-tra">
+                            @Html.AntiForgeryToken()
+                            <label for="TinhTrangVay">Tình trạng váy <span aria-hidden="true">*</span></label>
+                            <select id="TinhTrangVay" name="TinhTrangVay" required>
+                                <option value="">-- Chọn tình trạng --</option>
+                                <option value="Tot">Tốt, đủ phụ kiện</option>
+                                <option value="HaoMonNhe">Hao mòn nhẹ, không khấu trừ</option>
+                                <option value="HuHong">Có hư hỏng</option>
+                                <option value="MatPhuKien">Thiếu phụ kiện</option>
+                            </select>
+                            <label for="GhiChuKiemTra">Ghi chú kiểm tra</label>
+                            <textarea id="GhiChuKiemTra" name="GhiChuKiemTra" rows="3" placeholder="Mô tả tình trạng thực tế; ghi rõ lý do nếu có khấu trừ."></textarea>
+                            <label for="TienKhauTru">Khoản khấu trừ (₫)</label>
+                            <input id="TienKhauTru" name="TienKhauTru" type="number" min="0" max="@tongTienCoc" step="1000" value="0" data-deposit="@tongTienCoc" />
+                            <div class="tom-tat-hoan-coc"><span>Tiền cọc <strong>@tongTienCoc.ToString("N0")₫</strong></span><span>Hoàn lại khách <strong id="tien-hoan-lai">@tongTienCoc.ToString("N0")₫</strong></span></div>
+                            <label for="HinhThucHoanCoc">Hình thức hoàn cọc</label>
+                            <select id="HinhThucHoanCoc" name="HinhThucHoanCoc" required>
+                                <option value="TienMat">Tiền mặt</option>
+                                <option value="ChuyenKhoan">Chuyển khoản</option>
+                            </select>
+                            <label class="xac-nhan-hoan-coc"><input type="checkbox" name="DaHoanCocNgay" value="true" required /> Tôi xác nhận đã hoàn số tiền còn lại cho khách ngay tại thời điểm kiểm tra.</label>
+                            <button class="nut" type="submit">Lưu kiểm tra và hoàn tất đơn</button>
+                        </form>
+                    }
+                    else if (Model.TheoDoi is not null)
+                    {
+                        <dl class="luoi-thong-tin-don ket-qua-kiem-tra">
+                            <div><dt>Đã nhận váy</dt><dd>@(Model.TheoDoi.NgayNhanVay?.ToString("dd/MM/yyyy HH:mm") ?? "—")</dd></div>
+                            <div><dt>Đã kiểm tra và hoàn cọc</dt><dd>@(Model.TheoDoi.NgayHoanCoc?.ToString("dd/MM/yyyy HH:mm") ?? "—")</dd></div>
+                            <div><dt>Tình trạng</dt><dd>@(Model.TheoDoi.TinhTrangVay switch { "Tot" => "Tốt, đủ phụ kiện", "HaoMonNhe" => "Hao mòn nhẹ", "HuHong" => "Có hư hỏng", "MatPhuKien" => "Thiếu phụ kiện", _ => "Chưa ghi nhận" })</dd></div>
+                            <div><dt>Ghi chú</dt><dd>@(string.IsNullOrWhiteSpace(Model.TheoDoi.GhiChuKiemTra) ? "Không có" : Model.TheoDoi.GhiChuKiemTra)</dd></div>
+                            <div><dt>Tiền cọc / khấu trừ</dt><dd>@Model.TheoDoi.TienCoc.ToString("N0")₫ / @Model.TheoDoi.TienKhauTru.ToString("N0")₫</dd></div>
+                            <div><dt>Đã hoàn khách</dt><dd><strong>@Model.TheoDoi.TienHoanCoc.ToString("N0")₫</strong> · @(Model.TheoDoi.HinhThucHoanCoc == "ChuyenKhoan" ? "Chuyển khoản" : "Tiền mặt")</dd></div>
+                        </dl>
+                    }
+                </section>
+            }
+            @if (Model.TrangThai is "ChoXacNhan" or "DaXacNhan")
+            {
+                <section class="hanh-dong-don-thue">
+                    <h2>@(Model.TrangThai == "ChoXacNhan" ? "Xử lý yêu cầu thuê" : "Xác nhận tình trạng nhận váy")</h2>
+                    <div class="lua-chon-xu-ly">
+                        @if (Model.TrangThai == "ChoXacNhan")
+                        {
+                            <div class="the-xu-ly-don">
+                                <span class="nhan-nho">ĐỒNG Ý CHO THUÊ</span>
+                                <p>Xác nhận đơn sau khi kiểm tra thanh toán và lịch thuê.</p>
+                                <form asp-action="XacNhan" asp-route-id="@Model.MaDonThue" method="post">@Html.AntiForgeryToken()<button class="nut" type="submit">Xác nhận đơn</button></form>
+                            </div>
+                            <form asp-action="Huy" asp-route-id="@Model.MaDonThue" method="post" class="form-huy-don">@Html.AntiForgeryToken()<span class="nhan-nho">TỪ CHỐI YÊU CẦU</span><label for="lyDoHuy">Lý do hủy <span aria-hidden="true">*</span></label><textarea id="lyDoHuy" name="lyDoHuy" rows="2" maxlength="500" required placeholder="Ghi lý do hủy đơn."></textarea><button class="nut-bang" type="submit">Hủy yêu cầu</button></form>
+                        }
+                        else
+                        {
+                            <div class="the-xu-ly-don">
+                                <span class="nhan-nho">KHÁCH ĐÃ ĐẾN</span>
+                                <p>Thu @Model.TongTien.ToString("N0")₫ tiền thuê tại cửa hàng rồi xác nhận để mở bước kiểm tra khi trả váy.</p>
+                                <form asp-action="GhiNhanNhanVay" asp-route-id="@Model.MaDonThue" method="post">
+                                    @Html.AntiForgeryToken()
+                                    <label class="xac-nhan-hoan-coc"><input type="checkbox" name="daThuTienThue" value="true" required /> Đã nhận đủ tiền thuê @Model.TongTien.ToString("N0")₫ từ khách</label>
+                                    <button class="nut" type="submit">Xác nhận khách nhận váy và đã thu tiền</button>
+                                </form>
+                            </div>
+                            <form asp-action="GhiNhanKhongDenNhan" asp-route-id="@Model.MaDonThue" method="post" class="form-huy-don"><span class="nhan-nho">KHÁCH VẮNG MẶT</span><label for="ghiChuKhongDenNhan">Ghi chú <span aria-hidden="true">*</span></label><textarea id="ghiChuKhongDenNhan" name="ghiChuKhongDenNhan" rows="2" maxlength="500" required placeholder="Ví dụ: khách vắng mặt giờ hẹn, đã liên hệ lúc…"></textarea><button class="nut-bang" type="submit">Ghi nhận không đến · mất cọc</button></form>
+                        }
+                    </div>
+                </section>
+            }
+        </div>
+        <aside class="the-bang-chung-don">
+            <div class="tieu-de-the-don"><div><span class="nhan-nho">ĐỐI SOÁT</span><h2>Ảnh chuyển khoản</h2></div>
+                @if (ViewBag.CoAnhChuyenKhoan == true) { <a asp-action="XemAnhChuyenKhoan" asp-route-id="@Model.MaDonThue" target="_blank" rel="noopener">Mở ảnh ↗</a> }
+            </div>
+            @if (ViewBag.CoAnhChuyenKhoan == true)
+            {
+                <a class="khung-xem-anh-chuyen-khoan" asp-action="XemAnhChuyenKhoan" asp-route-id="@Model.MaDonThue" target="_blank" rel="noopener" aria-label="Mở ảnh chuyển khoản kích thước đầy đủ"><img src="@Url.Action("XemAnhChuyenKhoan", new { id = Model.MaDonThue })" alt="Ảnh chuyển khoản đơn VT-@Model.MaDonThue.ToString("D5")" loading="lazy" /></a>
+                <p class="ghi-chu-doi-soat">Đây là ảnh giao dịch tiền cọc để giữ lịch. Tiền thuê thu tại cửa hàng khi khách nhận váy.</p>
+            }
+            else { <div class="khong-co-bang-chung"><span>Ảnh chưa được gửi</span><small>Đơn cũ có thể chưa có ảnh đính kèm.</small></div> }
+        </aside>
     </div>
+    <p class="quay-lai-don"><a asp-action="Index">← Quay lại danh sách đơn thuê</a></p>
 </section>
+@section Scripts {
+    <script>
+        (() => {
+            const input = document.getElementById('TienKhauTru');
+            const output = document.getElementById('tien-hoan-lai');
+            if (!input || !output) return;
+            const deposit = Number(input.dataset.deposit || 0);
+            const format = new Intl.NumberFormat('vi-VN');
+            input.addEventListener('input', () => {
+                const deduction = Math.max(0, Math.min(deposit, Number(input.value || 0)));
+                output.textContent = `${format.format(deposit - deduction)}₫`;
+            });
+        })();
+    </script>
+}

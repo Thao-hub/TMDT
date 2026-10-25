@@ -6,6 +6,26 @@
     const themeButton = document.querySelector("[data-theme-toggle]");
     const themeLabel = document.querySelector("[data-theme-label]");
     const themeIcon = document.querySelector("[data-theme-icon]");
+    const isMobileMenu = () => window.matchMedia("(max-width: 760px)").matches;
+
+    if (localStorage.getItem("may-admin-sidebar-collapsed") === "true") {
+        shell.classList.add("menu-thu-gon");
+    }
+
+    const updateMenuButton = () => {
+        if (isMobileMenu()) {
+            const isOpen = shell.classList.contains("menu-dang-mo");
+            openButton.setAttribute("aria-expanded", String(isOpen));
+            openButton.setAttribute("aria-label", isOpen ? "Đóng menu quản trị" : "Mở menu quản trị");
+            openButton.title = isOpen ? "Đóng menu" : "Mở menu";
+            return;
+        }
+
+        const isExpanded = !shell.classList.contains("menu-thu-gon");
+        openButton.setAttribute("aria-expanded", String(isExpanded));
+        openButton.setAttribute("aria-label", isExpanded ? "Thu gọn menu quản trị" : "Mở rộng menu quản trị");
+        openButton.title = isExpanded ? "Thu gọn menu" : "Mở rộng menu";
+    };
 
     const updateThemeButton = () => {
         const isDark = root.dataset.theme === "dark";
@@ -22,7 +42,7 @@
 
     const setMenuOpen = (isOpen) => {
         shell.classList.toggle("menu-dang-mo", isOpen);
-        openButton.setAttribute("aria-expanded", String(isOpen));
+        updateMenuButton();
         if (isOpen) {
             closeButton.focus();
         } else {
@@ -30,20 +50,35 @@
         }
     };
 
-    openButton.addEventListener("click", () => setMenuOpen(true));
+    openButton.addEventListener("click", () => {
+        if (isMobileMenu()) {
+            setMenuOpen(!shell.classList.contains("menu-dang-mo"));
+            return;
+        }
+
+        const isCollapsed = !shell.classList.contains("menu-thu-gon");
+        shell.classList.toggle("menu-thu-gon", isCollapsed);
+        localStorage.setItem("may-admin-sidebar-collapsed", String(isCollapsed));
+        updateMenuButton();
+    });
     closeButton.addEventListener("click", () => setMenuOpen(false));
     document.querySelectorAll(".dieu-huong-quan-tri a").forEach((link) => {
         link.addEventListener("click", () => {
-            if (window.matchMedia("(max-width: 760px)").matches) {
-                shell.classList.remove("menu-dang-mo");
-                openButton.setAttribute("aria-expanded", "false");
+            if (isMobileMenu()) {
+                setMenuOpen(false);
             }
         });
     });
     document.addEventListener("keydown", (event) => {
-        if (event.key === "Escape" && shell.classList.contains("menu-dang-mo")) {
+        if (event.key === "Escape" && isMobileMenu() && shell.classList.contains("menu-dang-mo")) {
             setMenuOpen(false);
         }
+    });
+    window.addEventListener("resize", () => {
+        if (!isMobileMenu() && shell.classList.contains("menu-dang-mo")) {
+            shell.classList.remove("menu-dang-mo");
+        }
+        updateMenuButton();
     });
 
     document.querySelectorAll("form[data-confirm]").forEach((form) => {
@@ -129,4 +164,5 @@
     });
 
     updateThemeButton();
+    updateMenuButton();
 })();

@@ -23,7 +23,8 @@ public class DangKyViewModel
 
     [Required(ErrorMessage = "Vui lòng nhập mật khẩu.")]
     [DataType(DataType.Password)]
-    [MinLength(1, ErrorMessage = "Vui lòng nhập mật khẩu.")]
+    [StringLength(15, MinimumLength = 8, ErrorMessage = "Mật khẩu phải dài từ 8 đến 15 ký tự.")]
+    [RegularExpression(@"(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).*", ErrorMessage = "Mật khẩu cần có ít nhất 1 chữ thường, 1 chữ hoa và 1 ký tự đặc biệt.")]
     [Display(Name = "Mật khẩu")]
     public string MatKhau { get; set; } = "";
 

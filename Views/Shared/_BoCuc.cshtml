@@ -1,3 +1,16 @@
+@inject Microsoft.Extensions.Configuration.IConfiguration CauHinh
+@{
+    var diaChiCuaHang = CauHinh["ThongTinCuaHang:DiaChi"];
+    var soDienThoaiCuaHang = CauHinh["ThongTinCuaHang:SoDienThoai"];
+    var emailCuaHang = CauHinh["ThongTinCuaHang:Email"];
+    var gioHoTroCuaHang = CauHinh["ThongTinCuaHang:GioHoTro"];
+    diaChiCuaHang = string.IsNullOrWhiteSpace(diaChiCuaHang) ? "Chưa cập nhật" : diaChiCuaHang;
+    soDienThoaiCuaHang = string.IsNullOrWhiteSpace(soDienThoaiCuaHang) ? "Chưa cập nhật" : soDienThoaiCuaHang;
+    emailCuaHang = string.IsNullOrWhiteSpace(emailCuaHang) ? "Chưa cập nhật" : emailCuaHang;
+    gioHoTroCuaHang = string.IsNullOrWhiteSpace(gioHoTroCuaHang) ? "Chưa cập nhật" : gioHoTroCuaHang;
+    var diaChiDaCapNhat = !string.IsNullOrWhiteSpace(diaChiCuaHang)
+        && !diaChiCuaHang.Equals("Chưa cập nhật", StringComparison.OrdinalIgnoreCase);
+}
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -5,7 +18,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Tiệm Váy Mây</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/tai-khoan.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/hinh-anh-vay.css" asp-append-version="true" />
@@ -22,16 +35,37 @@
     <div class="tai-khoan-dieu-huong">
         @if (User.Identity?.IsAuthenticated == true)
         {
-            <a asp-controller="TaiKhoan" asp-action="HoSo">Xin chào, @User.Identity.Name</a>
-            <a asp-controller="DonThue" asp-action="CuaToi">Đơn thuê</a>
-            @if (User.IsInRole("QuanTriVien"))
-            {
-                <a asp-area="QuanTri" asp-controller="TrangChu" asp-action="Index">Quản trị</a>
-            }
-            <form asp-controller="TaiKhoan" asp-action="DangXuat" method="post">
-                @Html.AntiForgeryToken()
-                <button type="submit" class="nut-link">Đăng xuất</button>
-            </form>
+            <div class="cum-chuong-thong-bao" data-thong-bao data-url="/ThongBao/DanhSach" data-che-do="khach">
+                <button class="nut-chuong-thong-bao" type="button" title="Thông báo đơn thuê" aria-label="Mở thông báo" aria-expanded="false" aria-controls="bang-thong-bao-khach">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" /></svg>
+                    <span class="so-chuong-thong-bao" hidden></span>
+                </button>
+                <section class="bang-chuong-thong-bao" id="bang-thong-bao-khach" hidden aria-label="Thông báo đơn thuê">
+                    <div class="dau-bang-thong-bao"><strong>Thông báo</strong><span>Đơn thuê của bạn</span></div>
+                    <div class="noi-dung-chuong-thong-bao" aria-live="polite"><p class="trang-thai-tai-thong-bao">Đang tải thông báo…</p></div>
+                    <a class="chan-bang-thong-bao" asp-controller="DonThue" asp-action="CuaToi">Xem tất cả đơn thuê <span>→</span></a>
+                </section>
+            </div>
+            <a class="nut-don-thue-icon" asp-controller="DonThue" asp-action="CuaToi" title="Đơn thuê" aria-label="Đơn thuê của tôi">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h2l2.1 10.1a2 2 0 0 0 2 1.6h7.8a2 2 0 0 0 1.9-1.4L21 8H6"/><circle cx="10" cy="20" r="1.2"/><circle cx="18" cy="20" r="1.2"/></svg>
+            </a>
+            <div class="cum-tai-khoan" data-menu-tai-khoan>
+                <button class="nut-tai-khoan-icon" type="button" title="Tài khoản" aria-label="Mở menu tài khoản" aria-expanded="false" aria-controls="menu-tai-khoan">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.4"/><path d="M5.5 20c.3-3.5 2.7-5.6 6.5-5.6s6.2 2.1 6.5 5.6"/></svg>
+                </button>
+                <section class="menu-tai-khoan" id="menu-tai-khoan" hidden aria-label="Menu tài khoản">
+                    <div class="menu-tai-khoan-nguoi-dung"><span class="avatar-tai-khoan" aria-hidden="true">@(User.Identity?.Name is { Length: > 0 } tenDangNhap ? tenDangNhap[0].ToString().ToUpperInvariant() : "M")</span><span><strong>Tài khoản của bạn</strong><small>@User.Identity?.Name</small></span></div>
+                    <a asp-controller="TaiKhoan" asp-action="HoSo"><span>Hồ sơ cá nhân</span><b>↗</b></a>
+                    @if (User.IsInRole("QuanTriVien"))
+                    {
+                        <a asp-area="QuanTri" asp-controller="TrangChu" asp-action="Index"><span>Khu vực quản trị</span><b>↗</b></a>
+                    }
+                    <form asp-controller="TaiKhoan" asp-action="DangXuat" method="post">
+                        @Html.AntiForgeryToken()
+                        <button type="submit"><span>Đăng xuất</span><b>↗</b></button>
+                    </form>
+                </section>
+            </div>
         }
         else
         {
@@ -53,11 +87,48 @@
     @RenderBody()
 </main>
 <footer class="chan-trang">
-    <div><a class="thuong-hieu" asp-controller="TrangChu" asp-action="Index"><span class="bieu-tuong">M</span><span>mây <small>occasion wear</small></span></a><p>Để bạn tự tin tỏa sáng trong những dịp thật đặc biệt.</p></div>
-    <div><strong>Tiệm Váy Mây</strong><p>Cho thuê váy dự tiệc trực tuyến</p><p>Hỗ trợ: 08:00 – 21:00</p></div>
-    <div><strong>Thông tin</strong><p>Quy trình thuê váy</p><p>Chính sách đặt cọc</p><p>Liên hệ cửa hàng</p></div>
+    <div class="chan-trang-thuong-hieu">
+        <a class="thuong-hieu" asp-controller="TrangChu" asp-action="Index"><span class="bieu-tuong">M</span><span>mây <small>occasion wear</small></span></a>
+        <p>Đầm thiết kế cho thuê, để bạn tự tin tỏa sáng trong những dịp thật đặc biệt.</p>
+        <a class="chan-trang-nut" href="/#bo-suu-tap">Khám phá bộ sưu tập <span>↗</span></a>
+    </div>
+    <div class="chan-trang-mua-sam">
+        <strong>Mua sắm</strong>
+        <a href="/#bo-suu-tap">Bộ sưu tập váy</a>
+        <a href="/#bo-suu-tap">Váy dự tiệc</a>
+        <a href="/#bo-suu-tap">Thiết kế mới</a>
+        <a href="/#cach-thue">Cách thuê váy</a>
+    </div>
+    <div class="chan-trang-thong-tin">
+        <strong>Thông tin</strong>
+        <a asp-controller="TrangChu" asp-action="QuyTrinhThue">Quy trình thuê váy</a>
+        <a asp-controller="TrangChu" asp-action="ChinhSachDatCoc">Chính sách đặt cọc</a>
+        <a asp-controller="TrangChu" asp-action="LienHe">Liên hệ cửa hàng</a>
+        <a asp-controller="TaiKhoan" asp-action="HoSo">Tài khoản của tôi</a>
+    </div>
+    <div class="chan-trang-lien-he">
+        <strong>Liên hệ</strong>
+        <p>@diaChiCuaHang</p>
+        <p>@soDienThoaiCuaHang</p>
+        <p>@emailCuaHang</p>
+        <div class="chan-trang-ban-do">
+            @if (diaChiDaCapNhat)
+            {
+                <iframe title="Bản đồ vị trí Tiệm Váy Mây" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=@Uri.EscapeDataString(diaChiCuaHang)&output=embed"></iframe>
+                <a href="https://www.google.com/maps/search/?api=1&query=@Uri.EscapeDataString(diaChiCuaHang)" target="_blank" rel="noopener">Mở Google Maps ↗</a>
+            }
+            else
+            {
+                <div class="ban-do-cho-cap-nhat"><span aria-hidden="true">⌖</span><b>Bản đồ cửa hàng</b><small>Cập nhật địa chỉ để hiển thị bản đồ</small></div>
+            }
+        </div>
+        <small class="gio-ho-tro">Giờ hỗ trợ: @gioHoTroCuaHang</small>
+    </div>
+    <div class="chan-trang-ban-quyen">© @DateTime.Now.Year Tiệm Váy Mây · All rights reserved.</div>
 </footer>
+<button class="nut-len-dau" type="button" aria-label="Lên đầu trang" title="Lên đầu trang">↑</button>
 <script src="~/js/site.js" asp-append-version="true"></script>
+<script src="~/js/thong-bao.js" asp-append-version="true"></script>
 @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

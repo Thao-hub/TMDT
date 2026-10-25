@@ -8,6 +8,9 @@ public static class KhoiTaoQuanTri
 {
     public static async Task TaoTaiKhoanAsync(IServiceProvider dichVu)
     {
+        Console.InputEncoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
+        Console.OutputEncoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
+
         Console.Write("Họ và tên quản trị viên: ");
         var hoTen = Console.ReadLine()?.Trim();
         Console.Write("Email quản trị viên: ");
@@ -71,6 +74,12 @@ public static class KhoiTaoQuanTri
         else if (!await quanLyNguoiDung.CheckPasswordAsync(nguoiDung, matKhau))
         {
             throw new InvalidOperationException("Email đã tồn tại; mật khẩu cung cấp không khớp nên không thay đổi vai trò.");
+        }
+        else if (!string.Equals(nguoiDung.HoTen, hoTen, StringComparison.Ordinal))
+        {
+            nguoiDung.HoTen = hoTen;
+            var ketQuaCapNhatNguoiDung = await quanLyNguoiDung.UpdateAsync(nguoiDung);
+            KiemTraKetQua(ketQuaCapNhatNguoiDung, "Không thể cập nhật họ tên quản trị viên");
         }
 
         if (!await quanLyNguoiDung.IsInRoleAsync(nguoiDung, TenVaiTro.QuanTriVien))

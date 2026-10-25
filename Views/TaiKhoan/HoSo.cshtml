@@ -2,18 +2,48 @@
 @{
     ViewData["Title"] = "Hồ sơ cá nhân";
 }
-<section class="tai-khoan-trang">
-    <form asp-action="HoSo" method="post" class="bieu-mau-tai-khoan">
-        @Html.AntiForgeryToken()
-        <span class="nhan-nho">MY ACCOUNT</span>
-        <h1>Hồ sơ cá nhân</h1>
-        @if (TempData["ThongBao"] is string thongBao) { <div class="thong-bao">@thongBao</div> }
-        @if (TempData["ThongBaoLoi"] is string loi) { <div class="loi-bieu-mau">@loi</div> }
-        <div asp-validation-summary="ModelOnly" class="loi-bieu-mau"></div>
-        <label asp-for="Email"></label><input asp-for="Email" readonly />
-        <label asp-for="HoTen"></label><input asp-for="HoTen" autocomplete="name" /><span asp-validation-for="HoTen" class="loi-bieu-mau"></span>
-        <label asp-for="SoDienThoai"></label><input asp-for="SoDienThoai" autocomplete="tel" /><span asp-validation-for="SoDienThoai" class="loi-bieu-mau"></span>
-        <button class="nut nut-day-du" type="submit">Lưu thay đổi</button>
-        <p class="lien-ket-tai-khoan"><a asp-controller="DonThue" asp-action="CuaToi">Xem đơn thuê của tôi</a></p>
-    </form>
+<section class="ho-so-trang">
+    <div class="ho-so-tieu-de">
+        <span class="nhan-nho">TÀI KHOẢN CỦA BẠN</span>
+        <h1>Thông tin cá nhân</h1>
+        <p>Cập nhật thông tin liên hệ để cửa hàng tiện xác nhận lịch thuê và hỗ trợ bạn.</p>
+    </div>
+    @if (TempData["ThongBao"] is string thongBao) { <div class="ho-so-thong-bao" role="status">✓ @thongBao</div> }
+    @if (TempData["ThongBaoLoi"] is string loi) { <div class="loi-chung" role="alert">@loi</div> }
+    <div class="ho-so-bo-cuc">
+        <aside class="ho-so-the-thanh-vien">
+            <div class="ho-so-anh-dai-dien" aria-hidden="true">@(string.IsNullOrWhiteSpace(Model.HoTen) ? "M" : Model.HoTen.Trim()[0].ToString().ToUpperInvariant())</div>
+            <span class="ho-so-nhan">HỒ SƠ THÀNH VIÊN</span>
+            <h2>@(string.IsNullOrWhiteSpace(Model.HoTen) ? "Thành viên Tiệm Váy Mây" : Model.HoTen)</h2>
+            <p>@Model.Email</p>
+            <div class="ho-so-the-nhac-nho"><span>✦</span><p>Thông tin chính xác giúp tiệm liên hệ bạn nhanh hơn khi xác nhận đơn thuê.</p></div>
+            <nav class="ho-so-lien-ket" aria-label="Liên kết tài khoản">
+                <a asp-controller="DonThue" asp-action="CuaToi"><span>Đơn thuê của tôi</span><b>↗</b></a>
+                <a href="/#bo-suu-tap"><span>Khám phá bộ sưu tập</span><b>↗</b></a>
+                <a asp-controller="TrangChu" asp-action="LienHe"><span>Liên hệ cửa hàng</span><b>↗</b></a>
+            </nav>
+        </aside>
+        <form asp-action="HoSo" method="post" class="ho-so-bieu-mau">
+            @Html.AntiForgeryToken()
+            <div class="ho-so-bieu-mau-dau"><div><span class="nhan-nho">HỒ SƠ CỦA TÔI</span><h2>Thông tin liên hệ</h2></div><span class="ho-so-bao-mat">⌑ Thông tin riêng tư</span></div>
+            <p class="ho-so-mo-ta">Email dùng để đăng nhập và nhận thông báo, vì vậy không thể thay đổi tại đây.</p>
+            <div asp-validation-summary="ModelOnly" class="loi-bieu-mau"></div>
+            <div class="ho-so-truong">
+                <label asp-for="Email"></label>
+                <input asp-for="Email" readonly autocomplete="email" />
+                <small>Email đăng nhập tài khoản của bạn</small>
+            </div>
+            <div class="ho-so-truong">
+                <label asp-for="HoTen"></label>
+                <input asp-for="HoTen" autocomplete="name" placeholder="Nhập họ và tên" />
+                <span asp-validation-for="HoTen" class="loi-bieu-mau"></span>
+            </div>
+            <div class="ho-so-truong">
+                <label asp-for="SoDienThoai"></label>
+                <input asp-for="SoDienThoai" autocomplete="tel" inputmode="tel" placeholder="Nhập số điện thoại" />
+                <span asp-validation-for="SoDienThoai" class="loi-bieu-mau"></span>
+            </div>
+            <div class="ho-so-hanh-dong"><button class="nut" type="submit">Lưu thay đổi <span>→</span></button><span>Thông tin được cập nhật an toàn vào hồ sơ của bạn.</span></div>
+        </form>
+    </div>
 </section>

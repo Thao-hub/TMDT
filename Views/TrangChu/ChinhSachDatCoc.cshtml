@@ -1,0 +1,19 @@
+@{
+    ViewData["Title"] = "Chính sách đặt cọc";
+}
+<section class="trang-thong-tin">
+    <article class="trang-thong-tin-noi-dung">
+        <span class="nhan-nho">THANH TOÁN & ĐẢM BẢO</span>
+        <h1>Chính sách đặt cọc</h1>
+        <p class="mo-ta">Khoản thuê và tiền cọc được tách riêng để bạn biết rõ cần thanh toán khoản nào.</p>
+        <ol class="thong-tin-cac-buoc">
+            <li><strong>Tiền thuê</strong><span>Biểu mẫu hiển thị số ngày, đơn giá và tổng tiền thuê. Khi đặt lịch, khách chỉ chuyển tiền cọc; tiền thuê được thanh toán tại cửa hàng khi nhận váy.</span></li>
+            <li><strong>Tiền đặt cọc</strong><span>Mức cọc được hiển thị theo từng thiết kế và cộng vào tổng dự kiến của đơn. Cửa hàng sẽ liên hệ xác nhận cách nộp cọc và điều kiện hoàn cọc trước khi chốt đơn.</span></li>
+            <li><strong>Kiểm tra giao dịch</strong><span>Đơn ở trạng thái chờ xác nhận cho đến khi cửa hàng kiểm tra lịch thuê và ảnh chuyển khoản tiền cọc. Vui lòng giữ lại thông tin giao dịch để đối chiếu khi cần.</span></li>
+            <li><strong>Hoàn trả cọc</strong><span>Sau khi nhận lại váy, cửa hàng kiểm tra tình trạng theo checklist, gửi kết quả và hoàn phần tiền cọc còn lại.</span><a class="lien-ket-hoan-coc" asp-controller="TrangChu" asp-action="QuyTrinhHoanCoc">Xem chi tiết quy trình hoàn cọc <span>→</span></a></li>
+            <li><strong>Khách không đến nhận</strong><span>Nếu đơn đã được cửa hàng xác nhận nhưng khách không đến nhận váy theo lịch hẹn, cửa hàng ghi nhận lý do và giữ tiền cọc theo chính sách.</span></li>
+        </ol>
+        <p class="ghi-chu-thong-tin">Mã QR trên website hiện là mã mô phỏng, không phải tài khoản nhận tiền thật. Không chuyển khoản cho đến khi cửa hàng cung cấp và xác nhận thông tin thanh toán thực tế.</p>
+        <a asp-controller="TrangChu" asp-action="LienHe">Liên hệ cửa hàng để được hướng dẫn <span>→</span></a>
+    </article>
+</section>

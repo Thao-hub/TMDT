@@ -7,9 +7,14 @@
     <p class="mo-ta-quan-tri">Sắp xếp thiết kế để khách dễ dàng tìm được chiếc váy phù hợp.</p>
     <div class="tieu-de-danh-sach">
         <span>@Model.Count() danh mục</span>
+        <form class="tim-kiem-quan-tri" method="get">
+            <input type="search" name="q" value="@(ViewBag.TuKhoa ?? "")" placeholder="Tìm tên hoặc mô tả danh mục..." aria-label="Tìm danh mục" />
+            <button type="submit">Tìm kiếm</button>
+            @if (!string.IsNullOrWhiteSpace(ViewBag.TuKhoa as string)) { <a asp-action="Index">Xóa</a> }
+        </form>
         <a class="nut" asp-action="Them">Tạo danh mục <span>＋</span></a>
     </div>
-    <div class="bang-cuon"><table class="bang-quan-ly">
+    <div class="bang-cuon"><table class="bang-quan-ly bang-danh-muc">
         <thead><tr><th>TÊN DANH MỤC</th><th>MÔ TẢ</th><th>SỐ VÁY</th><th>THAO TÁC</th></tr></thead>
         <tbody>
         @if (!Model.Any())

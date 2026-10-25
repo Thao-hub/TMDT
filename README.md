@@ -41,6 +41,10 @@ Tên bảng, cột và constraint trong schema mới dùng tiếng Việt không
 
 Mỗi váy có thể lưu nhiều ảnh trong bảng `HinhAnhVay`; quản trị viên có thể tải thêm, thay, xóa ảnh và chọn ảnh đại diện. Ứng dụng chấp nhận JPG, PNG, WEBP và GIF, tối đa 8 MB mỗi tệp, lưu dưới `wwwroot/images/vay`.
 
+### Ảnh xác nhận chuyển khoản
+
+Form đặt thuê yêu cầu khách tải ảnh xác nhận chuyển khoản (JPG, PNG hoặc WEBP, tối đa 8 MB). Ảnh được lưu riêng dưới `App_Data/ChungTuThanhToan`, gắn với mã đơn qua tên tệp, không phục vụ công khai; chỉ quản trị viên đã đăng nhập mới xem được trong chi tiết đơn. Tính năng này không cần cập nhật schema database. Tài khoản QR hiện tại là dữ liệu mô phỏng, không dùng để nhận tiền thật.
+
 Nếu đang dùng database cũ, chạy phần chuyển đổi sau một lần để tạo bảng ảnh và chuyển các đường dẫn đã lưu:
 
 ```sql
@@ -86,7 +90,7 @@ dotnet run --project .\ThueVayDuTiec.Web.csproj -- --tao-quan-tri
 Remove-Item Env:ASPNETCORE_ENVIRONMENT
 ```
 
-Chương trình sẽ hỏi họ tên, email, mật khẩu và xác nhận mật khẩu; ký tự mật khẩu được che khi nhập. Lệnh thiết lập riêng này tạo vai trò còn thiếu và tài khoản quản trị; nếu email đã tồn tại, chỉ gán quyền khi mật khẩu nhập vào khớp với tài khoản đó. Lệnh không chạy khi website khởi động thông thường. Mọi môi trường chấp nhận mật khẩu từ 1 ký tự. Production vẫn yêu cầu có ít nhất một chữ số; Development chấp nhận mật khẩu chỉ gồm chữ hoặc số.
+Chương trình sẽ hỏi họ tên, email, mật khẩu và xác nhận mật khẩu; ký tự mật khẩu được che khi nhập. Lệnh thiết lập riêng này tạo vai trò còn thiếu và tài khoản quản trị; nếu email đã tồn tại, chỉ cập nhật họ tên và gán quyền khi mật khẩu nhập vào khớp với tài khoản đó. Nhập liệu trong lệnh này dùng UTF-8 để hỗ trợ tiếng Việt có dấu. Lệnh không chạy khi website khởi động thông thường. Mọi môi trường chấp nhận mật khẩu từ 1 ký tự. Production vẫn yêu cầu có ít nhất một chữ số; Development chấp nhận mật khẩu chỉ gồm chữ hoặc số.
 
 ## Bố cục chính
 

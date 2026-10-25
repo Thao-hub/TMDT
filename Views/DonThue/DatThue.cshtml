@@ -1,17 +1,80 @@
 @model YeuCauDatThue
+@using ThueVayDuTiec.Web.ViewModels
 @{
     ViewData["Title"] = "Đặt thuê váy";
 }
 <section class="dat-thue-trang">
     <div class="dat-thue-gioi-thieu"><span class="nhan-nho">YOUR SPECIAL MOMENT</span><h1>Đặt thuê<br><em>chiếc váy yêu thích</em></h1><p>Chọn thời gian dự kiến thuê. Hệ thống sẽ kiểm tra lịch trước khi tạo đơn.</p><a asp-controller="TrangChu" asp-action="Index">← Quay lại bộ sưu tập</a></div>
-    <form asp-action="DatThue" method="post" class="bieu-mau-dat">
+    <form asp-action="DatThue" method="post" enctype="multipart/form-data" class="bieu-mau-dat">
         @Html.AntiForgeryToken()
         <input asp-for="MaVay" type="hidden" />
         <h2>Thông tin đặt thuê</h2>
+        <p class="vay-dang-chon">Đang chọn váy: <strong>@ViewBag.TenVay</strong></p>
         <div asp-validation-summary="ModelOnly" class="loi-bieu-mau"></div>
         <p class="thong-tin-thanh-vien"><strong>@ViewBag.HoTenKhach</strong><br />@ViewBag.EmailKhach · @ViewBag.SoDienThoaiKhach <a asp-controller="TaiKhoan" asp-action="HoSo">Cập nhật hồ sơ</a></p>
         <div class="hang-ngay"><div><label asp-for="NgayBatDauThue">Ngày bắt đầu thuê</label><input asp-for="NgayBatDauThue" type="date" min="@DateTime.Today.ToString("yyyy-MM-dd")" /><span asp-validation-for="NgayBatDauThue" class="loi-bieu-mau"></span></div><div><label asp-for="NgayKetThucThue">Ngày trả váy</label><input asp-for="NgayKetThucThue" type="date" min="@DateTime.Today.ToString("yyyy-MM-dd")" /><span asp-validation-for="NgayKetThucThue" class="loi-bieu-mau"></span></div></div>
         <p class="ghi-chu-bieu-mau">Ngày thuê và ngày trả đều được tính vào tổng số ngày thuê. Yêu cầu chỉ được xác nhận sau khi cửa hàng kiểm tra.</p>
+        <section class="lich-bao-tri-vay" id="lichBaoTriVay" aria-live="polite">
+            <h3>Lịch thuê của váy này</h3>
+            <p>Váy được giữ trong ngày thuê và ngày trả. Tiệm cần thêm 1 ngày sau ngày trả để xử lý váy trước lượt thuê tiếp theo.</p>
+            @if (ViewBag.LichDaDat is List<KhoangLichThueViewModel> lichDaDat && lichDaDat.Count > 0)
+            {
+                <ul>
+                    @foreach (var khoang in lichDaDat)
+                    {
+                        <li data-ngay-bat-dau="@khoang.NgayBatDau.ToString("yyyy-MM-dd")" data-ngay-ket-thuc-chan="@khoang.NgayXuLy.ToString("yyyy-MM-dd")">
+                            <strong>Đã thuê:</strong> @khoang.NgayBatDau.ToString("dd/MM/yyyy") – @khoang.NgayKetThuc.ToString("dd/MM/yyyy")
+                            <span>Tiệm xử lý: @khoang.NgayXuLy.ToString("dd/MM/yyyy"); có thể thuê lại từ @khoang.NgayCoTheThueLai.ToString("dd/MM/yyyy")</span>
+                        </li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <p class="lich-trong">Chưa có lịch thuê nào được ghi nhận.</p>
+            }
+            <p class="canh-bao-lich" id="canhBaoLich" role="alert" hidden></p>
+        </section>
+        <section class="hoa-don-dat" id="hoaDonDat"
+                 data-gia-thue="@(((decimal)ViewBag.GiaThueMoiNgay).ToString(System.Globalization.CultureInfo.InvariantCulture))"
+                 data-tien-coc="@(((decimal)ViewBag.TienDatCoc).ToString(System.Globalization.CultureInfo.InvariantCulture))"
+                 aria-live="polite">
+            <h3>Tạm tính đơn thuê</h3>
+            <div><span>Số ngày thuê</span><strong id="soNgayTinh">—</strong></div>
+            <div><span>Tổng tiền thuê</span><strong id="tongTienThue">—</strong></div>
+            <div><span>Tiền cọc chuyển để giữ lịch</span><strong id="tienDatCoc">—</strong></div>
+            <div><span>Tiền thuê trả khi nhận váy</span><strong id="tongTienThueBill">—</strong></div>
+            <div class="hoa-don-tong"><span>Tổng chi phí dự kiến</span><strong id="tongDuKien">—</strong></div>
+        </section>
+        @if (ViewBag.MaQRThanhToan is string maQRThanhToan)
+        {
+            <section class="thanh-toan-qr" id="thanhToanQR"
+                     data-bank-id="@ViewBag.MaNganHangQR"
+                     data-account-number="@ViewBag.SoTaiKhoanQR"
+                     data-account-name="@ViewBag.TenChuTaiKhoanQR"
+                     data-dress-id="@Model.MaVay">
+                <span class="nhan-mo-phong-qr">MÃ MÔ PHỎNG · KHÔNG CHUYỂN TIỀN THẬT</span>
+                <h3>1. Chuyển tiền cọc để giữ lịch</h3>
+                <p>Quét QR và chuyển đúng tiền cọc. Tiền thuê không chuyển lúc đặt lịch; thanh toán tại cửa hàng khi nhận váy.</p>
+                <img id="anhQRDatThue" src="@maQRThanhToan" alt="QR mô phỏng, không chuyển tiền thật" width="260" height="300" />
+                <p><strong id="soTienQRDatThue">@(((decimal)ViewBag.SoTienQR).ToString("N0"))₫</strong></p>
+                <p>Nội dung: <strong id="noiDungQRDatThue">@ViewBag.NoiDungQR</strong></p>
+                <dl>
+                    <div><dt>Ngân hàng</dt><dd>@ViewBag.MaNganHangQR</dd></div>
+                    <div><dt>Chủ tài khoản</dt><dd>@ViewBag.TenChuTaiKhoanQR</dd></div>
+                    <div><dt>Số tài khoản</dt><dd>@ViewBag.SoTaiKhoanQR</dd></div>
+                </dl>
+                <small>Đây là tài khoản giả để trình diễn. Không chuyển tiền thật.</small>
+            </section>
+        }
+        <div class="tai-anh-chuyen-khoan">
+            <h3>2. Tải ảnh chuyển tiền cọc</h3>
+            <p>Chọn ảnh giao dịch chuyển tiền cọc thành công (JPG, PNG hoặc WEBP, tối đa 8 MB).</p>
+            <label asp-for="AnhChuyenKhoan">Ảnh chuyển tiền cọc <span aria-hidden="true">*</span></label>
+            <input asp-for="AnhChuyenKhoan" type="file" accept="image/jpeg,image/png,image/webp" required />
+            <span asp-validation-for="AnhChuyenKhoan" class="loi-bieu-mau"></span>
+            <img id="xemTruocAnhChuyenKhoan" class="xem-truoc-chuyen-khoan" alt="Xem trước ảnh chuyển khoản" hidden />
+        </div>
         <button class="nut nut-day-du" type="submit">Gửi yêu cầu thuê <span>→</span></button>
     </form>
 </section>

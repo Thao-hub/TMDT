@@ -1,4 +1,5 @@
 @model VayDuTiec
+@using ThueVayDuTiec.Web.ViewModels
 @{
     ViewData["Title"] = Model.TenVay;
     string ChuanHoaDuongDanAnh(string? duongDan)
@@ -72,6 +73,26 @@
                 <div><small>Kiểu dáng</small><strong>@Model.KieuDang</strong></div>
             </div>
             <div class="tien-coc"><span>Tiền đặt cọc</span><strong>@Model.TienDatCoc.ToString("N0")₫</strong></div>
+            <section class="lich-bao-tri-vay">
+                <h3>Lịch thuê váy @Model.TenVay</h3>
+                <p>Ngày thuê và ngày trả đã có khách được hiển thị bên dưới. Tiệm giữ thêm 1 ngày sau mỗi lượt để xử lý váy; váy có thể được thuê lại từ ngày kế tiếp.</p>
+                @if (ViewBag.LichDaDat is List<KhoangLichThueViewModel> lichDaDat && lichDaDat.Count > 0)
+                {
+                    <ul>
+                        @foreach (var khoang in lichDaDat)
+                        {
+                            <li>
+                                <strong>@khoang.NgayBatDau.ToString("dd/MM/yyyy") – @khoang.NgayKetThuc.ToString("dd/MM/yyyy")</strong>
+                                <span>Tiệm xử lý ngày @khoang.NgayXuLy.ToString("dd/MM/yyyy"); có thể thuê lại từ @khoang.NgayCoTheThueLai.ToString("dd/MM/yyyy")</span>
+                            </li>
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <p class="lich-trong">Váy chưa có lịch thuê, hiện đang trống.</p>
+                }
+            </section>
             <a class="nut nut-rong" asp-controller="DonThue" asp-action="DatThue" asp-route-id="@Model.MaVay">Chọn ngày thuê <span>→</span></a>
             <p class="luu-y">* Đơn thuê sẽ ở trạng thái chờ xác nhận. Cửa hàng liên hệ để xác nhận lịch và tiền cọc.</p>
         </div>

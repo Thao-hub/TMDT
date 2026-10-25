@@ -5,9 +5,16 @@
 <section class="trang-quan-ly">
     <span class="nhan-nho">ĐƠN HÀNG</span><h1>Đơn thuê</h1>
     <p class="mo-ta-quan-tri">Theo dõi lịch thuê và cập nhật trạng thái đơn của khách hàng.</p>
-    <div class="tieu-de-danh-sach"><span>@Model.Count() đơn thuê</span></div>
-    <div class="bang-cuon"><table class="bang-quan-ly">
-        <thead><tr><th>MÃ ĐƠN</th><th>KHÁCH HÀNG</th><th>THỜI GIAN THUÊ</th><th>TỔNG TIỀN</th><th>TRẠNG THÁI</th><th></th></tr></thead>
+    <div class="tieu-de-danh-sach">
+        <span>@Model.Count() đơn thuê</span>
+        <form class="tim-kiem-quan-tri" method="get">
+            <input type="search" name="q" value="@(ViewBag.TuKhoa ?? "")" placeholder="Tìm tên, email, số điện thoại, mã đơn..." aria-label="Tìm đơn thuê" />
+            <button type="submit">Tìm kiếm</button>
+            @if (!string.IsNullOrWhiteSpace(ViewBag.TuKhoa as string)) { <a asp-action="Index">Xóa</a> }
+        </form>
+    </div>
+    <div class="bang-cuon"><table class="bang-quan-ly bang-don-thue">
+        <thead><tr><th>MÃ ĐƠN</th><th>KHÁCH HÀNG</th><th>THỜI GIAN THUÊ</th><th>TIỀN THUÊ / CỌC</th><th>TRẠNG THÁI</th><th></th></tr></thead>
         <tbody>
         @if (!Model.Any())
         {
@@ -21,20 +28,26 @@
                 {
                     "ChoXacNhan" => "Chờ xác nhận",
                     "DaXacNhan" => "Đã xác nhận",
+                    "DaNhanVay" => "Khách đã nhận váy",
+                    "DaHoanTra" => "Hoàn thành",
+                    "KhongDenNhan" => "Khách không đến nhận · Mất cọc",
                     "DaHuy" => "Đã hủy",
                     _ => don.TrangThai
                 };
                 var lopTrangThai = don.TrangThai switch
                 {
                     "DaXacNhan" => "da-xac-nhan",
-                    "DaHuy" => "da-huy",
+                    "DaNhanVay" => "da-nhan-vay",
+                    "DaHoanTra" => "da-hoan-tra",
+                    "DaHuy" or "KhongDenNhan" => "da-huy",
                     _ => "cho-xac-nhan"
                 };
+                var tongTienCoc = don.DanhSachChiTiet.Sum(c => c.Vay?.TienDatCoc ?? 0m);
                 <tr>
                     <td><a asp-action="ChiTiet" asp-route-id="@don.MaDonThue">#VT-@don.MaDonThue.ToString("D5")</a></td>
                     <td><strong>@don.HoTenKhach</strong><small class="dong-phu">@don.Email</small></td>
                     <td>@don.NgayBatDauThue.ToString("dd/MM/yyyy") – @don.NgayKetThucThue.ToString("dd/MM/yyyy")</td>
-                    <td>@don.TongTien.ToString("N0")₫</td>
+                    <td><strong>@don.TongTien.ToString("N0")₫</strong><small class="dong-phu">Cọc: @tongTienCoc.ToString("N0")₫</small></td>
                     <td><span class="trang-thai-don @lopTrangThai">@trangThaiDon</span></td>
                     <td><a asp-action="ChiTiet" asp-route-id="@don.MaDonThue">Chi tiết ↗</a></td>
                 </tr>
