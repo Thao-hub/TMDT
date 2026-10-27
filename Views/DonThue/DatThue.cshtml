@@ -4,6 +4,14 @@
     ViewData["Title"] = "Đặt thuê váy";
 }
 <section class="dat-thue-trang">
+    @if (ViewBag.ThongBaoDatTrungLich is string thongBaoDatTrungLich)
+    {
+        <div class="thong-bao-dat-trung-lich" role="alert" aria-live="assertive">
+            <span class="bieu-tuong-canh-bao" aria-hidden="true">!</span>
+            <p>@thongBaoDatTrungLich</p>
+            <button type="button" aria-label="Đóng thông báo" data-dong-thong-bao>×</button>
+        </div>
+    }
     <div class="dat-thue-gioi-thieu"><span class="nhan-nho">YOUR SPECIAL MOMENT</span><h1>Đặt thuê<br><em>chiếc váy yêu thích</em></h1><p>Chọn thời gian dự kiến thuê. Hệ thống sẽ kiểm tra lịch trước khi tạo đơn.</p><a asp-controller="TrangChu" asp-action="Index">← Quay lại bộ sưu tập</a></div>
     <form asp-action="DatThue" method="post" enctype="multipart/form-data" class="bieu-mau-dat">
         @Html.AntiForgeryToken()
@@ -78,3 +86,20 @@
         <button class="nut nut-day-du" type="submit">Gửi yêu cầu thuê <span>→</span></button>
     </form>
 </section>
+
+@if (ViewBag.ThongBaoDatTrungLich is string)
+{
+    @section Scripts {
+        <script>
+            const thongBaoDatTrungLich = document.querySelector('.thong-bao-dat-trung-lich');
+            const dongThongBaoDatTrungLich = () => {
+                if (!thongBaoDatTrungLich) return;
+                thongBaoDatTrungLich.classList.add('dang-dong');
+                window.setTimeout(() => thongBaoDatTrungLich.remove(), 220);
+            };
+            thongBaoDatTrungLich?.querySelector('[data-dong-thong-bao]')
+                ?.addEventListener('click', dongThongBaoDatTrungLich);
+            window.setTimeout(dongThongBaoDatTrungLich, 8000);
+        </script>
+    }
+}

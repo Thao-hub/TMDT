@@ -87,7 +87,10 @@ public class DonThueController : Controller
                 && yeuCau.NgayKetThucThue.Date >= khoang.NgayBatDau.Date);
 
             if (biTrungLich)
+            {
+                ViewBag.ThongBaoDatTrungLich = "Váy đã có lịch thuê hoặc đang trong ngày tiệm xử lý. Lịch mới nhất đã được hiển thị; vui lòng chọn ngày khác.";
                 ModelState.AddModelError("", "Váy đã có lịch thuê hoặc đang trong ngày tiệm xử lý. Vui lòng xem lịch bận và chọn ngày khác.");
+            }
         }
 
         if (!ModelState.IsValid)
@@ -96,48 +99,88 @@ public class DonThueController : Controller
             return View(yeuCau);
         }
 
-        int soNgay = (yeuCau.NgayKetThucThue.Date - yeuCau.NgayBatDauThue.Date).Days + 1;
-        var tenAnhTam = await LuuAnhChuyenKhoanAsync(
-            yeuCau.AnhChuyenKhoan!, duoiAnhChuyenKhoan!, cancellationToken);
-        var donThue = new DonThue
-        {
-            NguoiDungId = nguoiDung.Id,
-            HoTenKhach = nguoiDung.HoTen,
-            Email = nguoiDung.Email,
-            SoDienThoai = nguoiDung.PhoneNumber,
-            NgayTao = DateTime.Now,
-            NgayBatDauThue = yeuCau.NgayBatDauThue.Date,
-            NgayKetThucThue = yeuCau.NgayKetThucThue.Date,
-            TongTien = vay.GiaThueMoiNgay * soNgay,
-            TrangThai = "ChoXacNhan",
-            DanhSachChiTiet = new List<ChiTietDonThue>
-            {
-                new()
-                {
-                    MaVay = vay.MaVay,
-                    SoNgayThue = soNgay,
-                    DonGia = vay.GiaThueMoiNgay
-                }
-            }
-        };
-
-        _duLieu.DonThue.Add(donThue);
-        string? tenAnhCuoi = null;
         await using var giaoDich = await _duLieu.Database.BeginTransactionAsync(cancellationToken);
+        string? tenAnhTam = null;
+        string? tenAnhCuoi = null;
+        var maDonThueMoi = 0;
         try
         {
+            // Khóa theo váy trong phạm vi giao dịch. Các yêu cầu đặt cùng váy
+            // phải tuần tự kiểm tra lịch trước khi được phép tạo đơn.
+            var ketQuaKhoa = (await _duLieu.Database.SqlQuery<int>($"""
+                DECLARE @ketQua INT;
+                EXEC @ketQua = sys.sp_getapplock
+                    @Resource = {"ThueVayDuTiec:DatThue:Vay:" + vay.MaVay},
+                    @LockMode = 'Exclusive',
+                    @LockOwner = 'Transaction',
+                    @LockTimeout = 10000;
+                SELECT @ketQua AS [Value];
+                """).ToListAsync(cancellationToken))[0];
+
+            if (ketQuaKhoa < 0)
+            {
+                await giaoDich.RollbackAsync(cancellationToken);
+                ViewBag.ThongBaoDatTrungLich = "Hệ thống đang xử lý nhiều yêu cầu thuê váy này. Vui lòng thử lại.";
+                ViewBag.LichDaDat = await LayLichThueVayAsync(vay.MaVay, cancellationToken);
+                GanThongTinThanhVien(nguoiDung);
+                return View(yeuCau);
+            }
+
+            // Đọc lịch mới sau khi đã lấy khóa, tránh dùng kết quả kiểm tra cũ
+            // ở đầu request khi một khách khác vừa tạo đơn.
+            lichDaDat = await LayLichThueVayAsync(vay.MaVay, cancellationToken);
+            bool biTrungLichLucGhi = lichDaDat.Any(khoang =>
+                yeuCau.NgayBatDauThue.Date <= khoang.NgayXuLy.Date
+                && yeuCau.NgayKetThucThue.Date >= khoang.NgayBatDau.Date);
+
+            if (biTrungLichLucGhi)
+            {
+                await giaoDich.RollbackAsync(cancellationToken);
+                ViewBag.LichDaDat = lichDaDat;
+                ViewBag.ThongBaoDatTrungLich = "Váy vừa được khách khác đặt vào khoảng ngày này. Lịch đã được cập nhật; vui lòng chọn ngày khác.";
+                GanThongTinThanhVien(nguoiDung);
+                return View(yeuCau);
+            }
+
+            int soNgay = (yeuCau.NgayKetThucThue.Date - yeuCau.NgayBatDauThue.Date).Days + 1;
+            tenAnhTam = await LuuAnhChuyenKhoanAsync(
+                yeuCau.AnhChuyenKhoan!, duoiAnhChuyenKhoan!, cancellationToken);
+            var donThue = new DonThue
+            {
+                NguoiDungId = nguoiDung.Id,
+                HoTenKhach = nguoiDung.HoTen,
+                Email = nguoiDung.Email,
+                SoDienThoai = nguoiDung.PhoneNumber,
+                NgayTao = DateTime.Now,
+                NgayBatDauThue = yeuCau.NgayBatDauThue.Date,
+                NgayKetThucThue = yeuCau.NgayKetThucThue.Date,
+                TongTien = vay.GiaThueMoiNgay * soNgay,
+                TrangThai = "ChoXacNhan",
+                DanhSachChiTiet = new List<ChiTietDonThue>
+                {
+                    new()
+                    {
+                        MaVay = vay.MaVay,
+                        SoNgayThue = soNgay,
+                        DonGia = vay.GiaThueMoiNgay
+                    }
+                }
+            };
+
+            _duLieu.DonThue.Add(donThue);
             await _duLieu.SaveChangesAsync(cancellationToken);
+            maDonThueMoi = donThue.MaDonThue;
             tenAnhCuoi = DoiTenAnhTheoMaDon(tenAnhTam, donThue.MaDonThue);
             await giaoDich.CommitAsync(cancellationToken);
         }
         catch
         {
             await giaoDich.RollbackAsync(CancellationToken.None);
-            XoaAnhChuyenKhoan(tenAnhTam);
+            if (tenAnhTam is not null) XoaAnhChuyenKhoan(tenAnhTam);
             if (tenAnhCuoi is not null) XoaAnhChuyenKhoan(tenAnhCuoi);
             throw;
         }
-        return RedirectToAction(nameof(XacNhan), new { id = donThue.MaDonThue });
+        return RedirectToAction(nameof(XacNhan), new { id = maDonThueMoi });
     }
 
     public async Task<IActionResult> XacNhan(int id, CancellationToken cancellationToken)
